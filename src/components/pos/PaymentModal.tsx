@@ -18,8 +18,8 @@ import {
 import { useAuth } from "../../hooks/useAuth";
 import { useSaleMutationQuery } from "../../services/saleServices/sale.mutation";
 import { useCartSocket } from "../../services/socketService";
-import KPay from "../../../dist/assets/KPay.jpg"
-import WavePay from "../../../dist/assets/WavePay.jpg"
+import KPay from "../../../dist/assets/KPay-BYGfBBbx.jpg"
+import WavePay from "../../../dist/assets/WavePay-CakrEqO1.jpg"
 
 interface PaymentModalProps {
   isOpen: boolean;
