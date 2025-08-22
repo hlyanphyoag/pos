@@ -1,9 +1,20 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { Search, Filter, Plus, Package, Grid, List, ChevronDown, Check } from 'lucide-react';
-import { ScannedProduct, CartItem } from '../../types/pos';
-import { useProductCategoriesQuery, useProductQuery } from '../../services/productService/product.query';
-import { useAuth } from '../../hooks/useAuth';
-
+import React, { useState, useMemo, useEffect, useRef } from "react";
+import {
+  Search,
+  Filter,
+  Plus,
+  Package,
+  Grid,
+  List,
+  ChevronDown,
+  Check,
+} from "lucide-react";
+import { ScannedProduct, CartItem } from "../../types/pos";
+import {
+  useProductCategoriesQuery,
+  useProductQuery,
+} from "../../services/productService/product.query";
+import { useAuth } from "../../hooks/useAuth";
 
 // Skeleton Components
 const ProductSkeleton = () => (
@@ -28,7 +39,10 @@ const CategorySkeleton = () => (
 const ProductListSkeleton = () => (
   <div className="space-y-3">
     {[...Array(6)].map((_, index) => (
-      <div key={index} className="flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-200 animate-pulse">
+      <div
+        key={index}
+        className="flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-200 animate-pulse"
+      >
         <div className="w-16 h-16 bg-gray-200 rounded-lg"></div>
         <div className="flex-1 space-y-2">
           <div className="h-4 bg-gray-200 rounded w-3/4"></div>
@@ -57,22 +71,25 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
   onChange,
   options,
   placeholder,
-  className = ""
+  className = "",
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const selectedOption = options.find(option => option.value === value);
+  const selectedOption = options.find((option) => option.value === value);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
@@ -85,9 +102,9 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
         <span className={selectedOption ? "text-gray-700" : "text-gray-500"}>
           {selectedOption ? selectedOption.label : placeholder}
         </span>
-        <ChevronDown 
-          size={16} 
-          className={`text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} 
+        <ChevronDown
+          size={16}
+          className={`text-gray-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
         />
       </button>
 
@@ -103,7 +120,9 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
                   setIsOpen(false);
                 }}
                 className={`w-full px-3 py-2 gap-1 text-left hover:bg-blue-50 transition-colors duration-150 flex items-center justify-between ${
-                  value === option.value ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700'
+                  value === option.value
+                    ? "bg-blue-100 text-blue-700 font-medium"
+                    : "text-gray-700"
                 }`}
               >
                 <span>{option.label}</span>
@@ -122,51 +141,66 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
 interface ProductCatalogProps {
   onAddToCart: (product: ScannedProduct) => void;
   cartItems: CartItem[];
+  userId: string;
 }
-
 
 export const ProductCatalog: React.FC<ProductCatalogProps> = ({
   onAddToCart,
-  cartItems
+  cartItems,
 }) => {
-  const [searchTermTrigger, setSearchTermTrigger] = useState('');
-  const [searchTermDebounce, setSearchTermDebounce] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const [sortBy, setSortBy] = useState<'name' | 'price'>('name');
+  const [searchTermTrigger, setSearchTermTrigger] = useState("");
+  const [searchTermDebounce, setSearchTermDebounce] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [sortBy, setSortBy] = useState<"name" | "price">("name");
 
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
-  const { data: categories, isPending: isPendingCategories, isError: isErrorCategories } = useProductCategoriesQuery()
-  const { data: productData, isPending, isError } = useProductQuery(null, null, searchTermDebounce, selectedCategory === 'All' ? null : selectedCategory, sortBy)
+  const {
+    data: categories,
+    isPending: isPendingCategories,
+    isError: isErrorCategories,
+  } = useProductCategoriesQuery();
+  const {
+    data: productData,
+    isPending,
+    isError,
+  } = useProductQuery(
+    null,
+    null,
+    searchTermDebounce,
+    selectedCategory === "All" ? null : selectedCategory,
+    sortBy
+  );
 
   // console.log("Categories:", categories)
 
   const { authState } = useAuth();
   const userId = authState?.user?.id;
 
-  
-
-
-  console.log("ApiProducts:", productData)
+  console.log("ApiProducts:", productData);
 
   // const categories = useMemo(() => {
   //   return [ ...Array.from(new Set(productData?.results?.map(product => product.category)))];
   // }, [productData]);
 
   const filteredAndSortedProducts = useMemo(() => {
-    let filtered = productData?.results?.filter(product => {
-      const matchesSearch = product.name.toLowerCase().includes(searchTermTrigger.toLowerCase()) ||
-        product.category.toLowerCase().includes(searchTermTrigger.toLowerCase());
-      const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory;
+    let filtered = productData?.results?.filter((product) => {
+      const matchesSearch =
+        product.name.toLowerCase().includes(searchTermTrigger.toLowerCase()) ||
+        product.category
+          .toLowerCase()
+          .includes(searchTermTrigger.toLowerCase());
+      const matchesCategory =
+        selectedCategory === "All" || product.category === selectedCategory;
       return matchesSearch && matchesCategory;
     });
 
     // Sort products
     filtered?.sort((a, b) => {
       switch (sortBy) {
-        case 'price':
+        case "price":
           return a.price - b.price;
-        case 'name':
+        case "name":
         default:
           return a.name.localeCompare(b.name);
       }
@@ -176,7 +210,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
   }, [searchTermTrigger, selectedCategory, sortBy]);
 
   const getCartQuantity = (productId: string) => {
-    const cartItem = cartItems.find(item => item.id === productId);
+    const cartItem = cartItems.find((item) => item.id === productId);
     return cartItem ? cartItem.quantity : 0;
   };
 
@@ -184,16 +218,16 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
   useEffect(() => {
     const searchHandler = setTimeout(() => {
       if (searchTermTrigger) {
-        setSearchTermDebounce(searchTermTrigger)
+        setSearchTermDebounce(searchTermTrigger);
       } else {
-        setSearchTermDebounce('')
+        setSearchTermDebounce("");
       }
-    }, 500)
-    return () => clearTimeout(searchHandler)
-  }, [searchTermTrigger])
+    }, 500);
+    return () => clearTimeout(searchHandler);
+  }, [searchTermTrigger]);
 
   if (isError) {
-    return <div>Error loading products</div>
+    return <div>Error loading products</div>;
   }
 
   return (
@@ -204,17 +238,19 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
             <Package className="text-white" size={24} />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Product Catalog</h2>
+            <h2 className="text-2xl font-bold text-gray-900">
+              Product Catalog
+            </h2>
             <p className="text-gray-600">Browse and add products to cart</p>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
           <button
-            onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
+            onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
             className="p-3 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors"
           >
-            {viewMode === 'grid' ? <List size={20} /> : <Grid size={20} />}
+            {viewMode === "grid" ? <List size={20} /> : <Grid size={20} />}
           </button>
         </div>
       </div>
@@ -222,7 +258,10 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
       {/* Search and Filters */}
       <div className="mb-6 space-y-4">
         <div className="relative">
-          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+          <Search
+            className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
+            size={20}
+          />
           <input
             type="text"
             placeholder="Search products..."
@@ -238,9 +277,9 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
               <Filter size={18} className="text-blue-600" />
               <span className="text-sm font-medium text-blue-700">Filters</span>
             </div>
-            
+
             {isPendingCategories ? (
-              <div className='flex gap-3'>
+              <div className="flex gap-3">
                 <CategorySkeleton />
                 <CategorySkeleton />
                 <CategorySkeleton />
@@ -251,8 +290,11 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                   value={selectedCategory}
                   onChange={setSelectedCategory}
                   options={[
-                    { value: 'All', label: 'All Categories' },
-                    ...(categories?.map((category: string) => ({ value: category, label: category })) || [])
+                    { value: "All", label: "All Categories" },
+                    ...(categories?.map((category: string) => ({
+                      value: category,
+                      label: category,
+                    })) || []),
                   ]}
                   placeholder="Select Category"
                   className="min-w-[180px]"
@@ -260,10 +302,10 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
 
                 <CustomDropdown
                   value={sortBy}
-                  onChange={(value) => setSortBy(value as 'name' | 'price')}
+                  onChange={(value) => setSortBy(value as "name" | "price")}
                   options={[
-                    { value: 'name', label: 'Sort by Name' },
-                    { value: 'price', label: 'Sort by Price' }
+                    { value: "name", label: "Sort by Name" },
+                    { value: "price", label: "Sort by Price" },
                   ]}
                   placeholder="Sort Options"
                   className="min-w-[160px]"
@@ -284,7 +326,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
       {/* Products Display */}
       <div className="flex-1 overflow-y-auto">
         {isPending ? (
-          viewMode === 'grid' ? (
+          viewMode === "grid" ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {[...Array(8)].map((_, index) => (
                 <ProductSkeleton key={index} />
@@ -295,9 +337,9 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
           )
         ) : (
           <>
-            {viewMode === 'grid' ? (
+            {viewMode === "grid" ? (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {productData?.results?.map(product => {
+                {productData?.results?.map((product) => {
                   const cartQuantity = getCartQuantity(product.id);
                   return (
                     <div
@@ -306,7 +348,11 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                     >
                       <div className="aspect-square bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg flex items-center justify-center mb-3 group-hover:scale-105 transition-transform duration-300">
                         {product?.image ? (
-                          <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                          <img
+                            src={product.image}
+                            alt={product.name}
+                            className="w-full h-full object-cover"
+                          />
                         ) : (
                           <div className="text-4xl font-bold text-blue-600">
                             {product.name.charAt(0)}
@@ -318,7 +364,9 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                         <h3 className="font-semibold text-gray-900 text-sm line-clamp-2">
                           {product.name}
                         </h3>
-                        <p className="text-xs text-gray-500">{product.category}</p>
+                        <p className="text-xs text-gray-500">
+                          {product.category}
+                        </p>
                         <div className="flex items-center justify-between">
                           <span className="text-lg font-bold text-blue-600">
                             {product.price} MMK
@@ -343,7 +391,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
               </div>
             ) : (
               <div className="space-y-3">
-                {productData?.results?.map(product => {
+                {productData?.results?.map((product) => {
                   const cartQuantity = getCartQuantity(product.id);
                   return (
                     <div
@@ -352,21 +400,31 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                     >
                       <div className="w-16 h-16 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
                         {product.image ? (
-                          <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
-                        ) : (<div className="text-2xl font-bold text-blue-600">
-                          {product.name.charAt(0)}
-                        </div>)}
+                          <img
+                            src={product.image}
+                            alt={product.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="text-2xl font-bold text-blue-600">
+                            {product.name.charAt(0)}
+                          </div>
+                        )}
                       </div>
 
                       <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900">{product.name}</h3>
-                        <p className="text-sm text-gray-500">{product.category}</p>
+                        <h3 className="font-semibold text-gray-900">
+                          {product.name}
+                        </h3>
+                        <p className="text-sm text-gray-500">
+                          {product.category}
+                        </p>
                         {/* <p className="text-xs text-gray-400">Barcode: {product?.barcode}</p> */}
                       </div>
 
-                      <div className="text-right">
+                      <div className="text-right flex flex-col items-end">
                         <div className="text-xl font-bold text-blue-600 mb-1">
-                          ${product.price.toFixed(2)}
+                          {product.price.toFixed(2)} MMK
                         </div>
                         {cartQuantity > 0 && (
                           <div className="text-xs text-green-600 font-medium mb-2 animate-pulse">
@@ -375,7 +433,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                         )}
                         <button
                           onClick={() => onAddToCart(product)}
-                          className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-4 py-2.5 rounded-lg font-medium transition-all duration-300 flex items-center gap-2 active:scale-95 hover:shadow-lg transform hover:-translate-y-0.5"
+                          className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-4 py-2.5 rounded-lg font-medium transition-all duration-300 flex items-center gap-2 active:scale-95 hover:shadow-lg transform hover:-translate-y-0.5 max-w-fit"
                         >
                           <Plus size={16} />
                           Add
@@ -391,7 +449,9 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
               <div className="text-center py-12">
                 <Package size={64} className="mx-auto text-gray-300 mb-4" />
                 <p className="text-xl text-gray-500">No products found</p>
-                <p className="text-gray-400">Try adjusting your search or filter criteria</p>
+                <p className="text-gray-400">
+                  Try adjusting your search or filter criteria
+                </p>
               </div>
             )}
           </>

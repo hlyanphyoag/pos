@@ -1,4 +1,4 @@
-import { CartItem, PaymentDetails } from '../types/pos';
+import { CartItem, PaymentDetails } from "../types/pos";
 
 export interface ReceiptData {
   transactionId: string;
@@ -24,7 +24,7 @@ export const generateReceiptHTML = (receiptData: ReceiptData): string => {
     timestamp,
     storeName,
     storeAddress,
-    cashierName
+    cashierName,
   } = receiptData;
 
   return `
@@ -133,36 +133,44 @@ export const generateReceiptHTML = (receiptData: ReceiptData): string => {
       </div>
       
       <div class="items">
-        ${items.map(item => `
+        ${items
+          .map(
+            (item) => `
           <div class="item">
             <div class="item-name">${item.name}</div>
             <div class="item-qty">${item.quantity}x</div>
-            <div class="item-price">${(item.price * item.quantity).toFixed(0)} MMK</div>
+            <div class="item-price">${(item.price * item.quantity).toFixed(2)} MMK</div>
           </div>
-        `).join('')}
+        `
+          )
+          .join("")}
       </div>
       
       <div class="totals">
         <div class="total-line">
           <span>Subtotal:</span>
-          <span>${subtotal.toFixed(0)} MMK</span>
+          <span>${subtotal.toFixed(2)} MMK</span>
         </div>
         <div class="total-line">
-          <span>Tax (8.5%):</span>
-          <span>${tax.toFixed(0)} MMK</span>
+          <span>Tax (5%):</span>
+          <span>${tax.toFixed(2)} MMK</span>
         </div>
         <div class="total-line final">
           <span>TOTAL:</span>
-          <span>${total.toFixed(0)} MMK</span>
+          <span>${total.toFixed(2)} MMK</span>
         </div>
       </div>
       
       <div class="payment-info">
-        <div>Payment Method: ${paymentDetails.method === 'cash' ? 'Cash' : `Digital (${paymentDetails.digitalMethod})`}</div>
-        ${paymentDetails.method === 'cash' ? `
-          <div>Cash Received: ${paymentDetails.cashReceived?.toFixed(0)} MMK</div>
-          <div>Change: ${paymentDetails.change?.toFixed(0)} MMK</div>
-        ` : ''}
+        <div>Payment Method: ${paymentDetails.method === "cash" ? "Cash" : `Digital (${paymentDetails.digitalMethod})`}</div>
+        ${
+          paymentDetails.method === "cash"
+            ? `
+          <div>Cash Received: ${paymentDetails.cashReceived?.toFixed(2)} MMK</div>
+          <div>Change: ${paymentDetails.change?.toFixed(2)} MMK</div>
+        `
+            : ""
+        }
       </div>
       
       <div class="footer">
@@ -176,28 +184,28 @@ export const generateReceiptHTML = (receiptData: ReceiptData): string => {
 
 export const downloadReceipt = (receiptData: ReceiptData) => {
   const html = generateReceiptHTML(receiptData);
-  const blob = new Blob([html], { type: 'text/html' });
+  const blob = new Blob([html], { type: "text/html" });
   const url = URL.createObjectURL(blob);
-  
-  const link = document.createElement('a');
+
+  const link = document.createElement("a");
   link.href = url;
   link.download = `receipt-${receiptData.transactionId}.html`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
-  
+
   URL.revokeObjectURL(url);
 };
 
 export const printReceipt = (receiptData: ReceiptData) => {
   const html = generateReceiptHTML(receiptData);
-  const printWindow = window.open('', '_blank');
-  
+  const printWindow = window.open("", "_blank");
+
   if (printWindow) {
     printWindow.document.write(html);
     printWindow.document.close();
     printWindow.focus();
-    
+
     // Wait for content to load before printing
     setTimeout(() => {
       printWindow.print();

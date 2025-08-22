@@ -4,7 +4,6 @@ import { ScannedProduct, CartItem } from "../../types/pos";
 import { Scanner as QrScanner } from "@yudiel/react-qr-scanner";
 import { useProductQueryBySku } from "../../services/productService/product.query";
 
-
 interface ScannerProps {
   onProductScanned: (product: ScannedProduct) => void;
   onManualAdd: (product: ScannedProduct) => void;
@@ -40,7 +39,7 @@ export const Scanner: React.FC<ScannerProps> = ({
   }, [productBySku]);
 
   const handleScanQr = (result: any) => {
-    console.log("Here from handleScanQr")
+    console.log("Here from handleScanQr");
     if (result) {
       console.log("QR Code Scanned:", result[0].rawValue);
       setSkuByScanner(result[0].rawValue);
@@ -55,7 +54,7 @@ export const Scanner: React.FC<ScannerProps> = ({
         </div>
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Product Scanner</h2>
-          <p className="text-gray-600">Scan or enter product barcodes</p>
+          <p className="text-gray-600">Scan or enter product QR Code</p>
         </div>
       </div>
 
@@ -86,8 +85,7 @@ export const Scanner: React.FC<ScannerProps> = ({
                     facingMode: "environment",
                   }}
                   classNames={{
-                    container:
-                      "w-full max-w-[500px] h-[500px] mx-auto",
+                    container: "w-full max-w-[500px] h-[500px] mx-auto",
                   }}
                   styles={{
                     container: {
@@ -98,7 +96,7 @@ export const Scanner: React.FC<ScannerProps> = ({
                       borderRadius: "30px",
                     },
                   }}
-                />   
+                />
               </div>
             )}
             <h3 className="text-white text-xl font-semibold mb-2">
@@ -106,8 +104,8 @@ export const Scanner: React.FC<ScannerProps> = ({
             </h3>
             <p className="text-gray-400 mb-6">
               {isScanning
-                ? "Please wait while we process the barcode"
-                : "Position barcode in front of scanner"}
+                ? "Please wait while we process the QR Code"
+                : "Position QR Code in front of scanner"}
             </p>
 
             {/* Scanning Animation */}

@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
-import { CartItem } from '../types';
-import { Minus, Plus, X, ShoppingCart, CreditCard } from 'lucide-react';
-import { useCartSocket } from '../services/socketService';
-import { useAuth } from '../hooks/useAuth';
+import React, { useEffect } from "react";
+import { CartItem } from "../types";
+import { Minus, Plus, X, ShoppingCart, CreditCard } from "lucide-react";
+import { useCartSocket } from "../services/socketService";
+import { useAuth } from "../hooks/useAuth";
 
 interface CartProps {
   items: CartItem[];
@@ -21,16 +21,16 @@ export const Cart: React.FC<CartProps> = ({
   onCheckout,
   subtotal,
   tax,
-  total
+  total,
 }) => {
   const { authState } = useAuth();
   const userId = authState?.user?.id;
-  const { emitCartUpdate } = useCartSocket(userId ||  '')
-  console.log("Items On Cart:", items)
-  
+  const { emitCartUpdate } = useCartSocket(userId || "");
+  console.log("Items On Cart:", items);
+
   useEffect(() => {
-    emitCartUpdate(items, subtotal, tax, total, "")
-  }, [items, subtotal, tax, total, emitCartUpdate])
+    emitCartUpdate(items, subtotal, tax, total);
+  }, [items, subtotal, tax, total, emitCartUpdate]);
 
   if (items.length === 0) {
     return (
@@ -51,24 +51,33 @@ export const Cart: React.FC<CartProps> = ({
     <div className="bg-white rounded-xl shadow-lg p-6 h-fit">
       <div className="flex items-center gap-3 mb-6">
         <ShoppingCart className="text-blue-600" size={24} />
-        <h2 className="text-xl font-bold text-gray-900">Cart ({items.length})</h2>
+        <h2 className="text-xl font-bold text-gray-900">
+          Cart ({items.length})
+        </h2>
       </div>
-      
+
       <div className="space-y-4 mb-6 max-h-96 overflow-y-auto">
         {items.map((item) => (
-          <div key={item.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+          <div
+            key={item.id}
+            className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg"
+          >
             <div className="flex-1">
               <h4 className="font-medium text-gray-900">{item.name}</h4>
               <p className="text-sm text-gray-500">{item.price} MMK each</p>
             </div>
             <div className="flex items-center gap-2">
               <button
-                onClick={() => onUpdateQuantity(item.id, Math.max(0, item.quantity - 1))}
+                onClick={() =>
+                  onUpdateQuantity(item.id, Math.max(0, item.quantity - 1))
+                }
                 className="p-1 rounded-md hover:bg-gray-200 transition-colors"
               >
                 <Minus size={16} />
               </button>
-              <span className="w-8 text-center font-medium">{item.quantity}</span>
+              <span className="w-8 text-center font-medium">
+                {item.quantity}
+              </span>
               <button
                 onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
                 className="p-1 rounded-md hover:bg-gray-200 transition-colors"
@@ -92,7 +101,7 @@ export const Cart: React.FC<CartProps> = ({
           <span>{subtotal.toFixed(2)} MMK</span>
         </div>
         <div className="flex justify-between text-gray-600">
-          <span>Tax (8.5%):</span>
+          <span>Tax (5%):</span>
           <span>{tax.toFixed(2)} MMK</span>
         </div>
         <div className="flex justify-between text-xl font-bold text-gray-900 pt-2 border-t">

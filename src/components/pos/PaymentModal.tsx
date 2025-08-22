@@ -18,8 +18,8 @@ import {
 import { useAuth } from "../../hooks/useAuth";
 import { useSaleMutationQuery } from "../../services/saleServices/sale.mutation";
 import { useCartSocket } from "../../services/socketService";
-import KPay from "../../../public/KPay.jpg"
-import WavePay from "../../../public/WavePay.jpg"
+import KPay from "../../../public/KPay.jpg";
+import WavePay from "../../../public/WavePay.jpg";
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -52,7 +52,9 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     useState<PaymentDetails | null>(null);
   const { authState } = useAuth();
 
-  const { emitDigitalPaymentMethod, resetAllData} = useCartSocket(authState?.user?.id || '');
+  const { emitDigitalPaymentMethod, resetAllData } = useCartSocket(
+    authState?.user?.id || ""
+  );
 
   const { mutate: saleMutation, isPending } = useSaleMutationQuery();
 
@@ -63,7 +65,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       productId: item.id,
       quantity: item.quantity,
     }));
-    
+
     const paymentDetails: PaymentDetails = {
       method: selectedMethod,
       digitalMethod:
@@ -76,19 +78,28 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
     saleMutation(
       {
-        payload: { items: payloadItem, paid: true, paymentType: selectedMethod === 'cash' ? 'Cash' : selectedMethod === 'digital' ?  selectedDigitalMethod : 'Cash' },
+        payload: {
+          items: payloadItem,
+          paid: true,
+          paymentType:
+            selectedMethod === "cash"
+              ? "Cash"
+              : selectedMethod === "digital"
+                ? selectedDigitalMethod
+                : "Cash",
+        },
       },
       {
         onSuccess: (data) => {
           console.log("Data", data);
           setCompletedPaymentDetails(paymentDetails);
           setIsComplete(true);
-          resetAllData()
+          resetAllData();
         },
         onError: (err) => {
           console.log(err);
           // Handle error - you might want to show an error message
-        }
+        },
       }
     );
   };
@@ -119,12 +130,12 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       total,
       paymentDetails: completedPaymentDetails,
       timestamp: new Date(),
-      storeName: "QuickPOS Store",
-      storeAddress: "123 Main Street, City, State 12345",
+      storeName: "A&E Mart",
+      storeAddress: "No.112, Main Street, Dawei, Tanintharyi",
       cashierName: authState.user?.name || "Cashier",
     };
 
-    handleCompleteTransaction()
+    handleCompleteTransaction();
     downloadReceipt(receiptData);
   };
 
@@ -143,11 +154,10 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       storeAddress: "123 Main Street, City, State 12345",
       cashierName: authState.user?.name || "Cashier",
     };
-    
-    handleCompleteTransaction()
+
+    handleCompleteTransaction();
     printReceipt(receiptData);
   };
-
 
   const handleCompleteTransaction = () => {
     if (completedPaymentDetails) {
@@ -161,26 +171,22 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     }
   };
 
-  console.log('ShowDigitalPayment:', showDigitalPayment);
+  console.log("ShowDigitalPayment:", showDigitalPayment);
 
   const digitalMethods = [
-    { 
-      id: "KPay" as DigitalPaymentMethod, 
-      label: "KPay", 
-      color: "bg-blue-500", 
-      imageUrl: KPay
+    {
+      id: "KPay" as DigitalPaymentMethod,
+      label: "KPay",
+      color: "bg-blue-500",
+      imageUrl: KPay,
     },
     {
       id: "WavePay" as DigitalPaymentMethod,
       label: "WavePay",
-      color: "bg-purple-500", 
-      imageUrl: WavePay
-    }
+      color: "bg-purple-500",
+      imageUrl: WavePay,
+    },
   ];
-
-  
-
-  
 
   const cashAmount = parseFloat(cashReceived) || 0;
   const change = cashAmount - total;
@@ -195,12 +201,12 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   );
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-auto ">
       <div className="bg-white rounded-3xl p-8 max-w-lg w-full mx-4 relative">
         <button
           onClick={() => {
             handleCompleteTransaction();
-            onClose()
+            onClose();
           }}
           className="absolute top-6 right-6 p-2 hover:bg-gray-100 rounded-xl transition-colors"
         >
@@ -221,11 +227,11 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             {selectedMethod === "cash" && change > 0 && (
               <div className="mt-6 p-4 bg-blue-50 rounded-xl">
                 <p className="text-blue-900 font-semibold text-xl">
-                  Change: ${change.toFixed(2)}
+                  Change: {change.toFixed(2)} MMK
                 </p>
               </div>
             )}
-            
+
             {/* Receipt Actions */}
             <div className="mt-8 flex gap-4 justify-center">
               <button
@@ -281,32 +287,43 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 <div
                   className={`w-24 h-24 ${digitalMethods.find((m) => m.id === selectedDigitalMethod)?.color} rounded-2xl flex items-center justify-center`}
                 >
-                  <img src={digitalMethods.find((m) => m.id === selectedDigitalMethod)?.imageUrl} alt="" className="w-full h-full" />
+                  <img
+                    src={
+                      digitalMethods.find((m) => m.id === selectedDigitalMethod)
+                        ?.imageUrl
+                    }
+                    alt=""
+                    className="w-full h-full"
+                  />
                 </div>
               </div>
             )}
 
             <div className="bg-blue-50 p-4 rounded-xl mb-6">
               <p className="text-blue-900 font-semibold text-xl">
-                Total: {total.toFixed(0)} MMK
+                Total: {total.toFixed(2)} MMK
               </p>
             </div>
 
             <button
-             onClick={handlePayment}
-             disabled={isPending}
-             className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-colors"
+              onClick={handlePayment}
+              disabled={isPending}
+              className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-colors"
             >
-            {isPending ? (
-              <div className="flex items-center justify-center gap-x-3text-white">
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                <span className="font-medium text-white">Processing payment...</span>
-              </div>
-            ) : (
-              <div className="flex items-center justify-center gap-3 text-blue-600">
-                <span className="font-medium text-white">Confirm Payment</span>
-              </div>
-            )}
+              {isPending ? (
+                <div className="flex items-center justify-center gap-x-3text-white">
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                  <span className="font-medium text-white">
+                    Processing payment...
+                  </span>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center gap-3 text-blue-600">
+                  <span className="font-medium text-white">
+                    Confirm Payment
+                  </span>
+                </div>
+              )}
             </button>
           </div>
         ) : (
@@ -403,7 +420,11 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                         {id === "qr" ? (
                           <QrCode className="text-white" size={20} />
                         ) : (
-                          <img src={imageUrl} alt="" className="w-full h-full" />
+                          <img
+                            src={imageUrl}
+                            alt=""
+                            className="w-full h-full"
+                          />
                         )}
                       </div>
                       <span
@@ -452,7 +473,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                       <span
                         className={`font-bold text-xl ${change >= 0 ? "text-green-600" : "text-red-600"}`}
                       >
-                        {Math.max(0, change)} MMK
+                        {Math.max(0, change).toFixed(2)} MMK
                       </span>
                     </div>
                   </div>
@@ -461,13 +482,16 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             )}
 
             <button
-              onClick={selectedMethod === 'cash' ? handlePayment : () => {
-                emitDigitalPaymentMethod(selectedDigitalMethod);
-                setShowDigitalPayment(true)}
+              onClick={
+                selectedMethod === "cash"
+                  ? handlePayment
+                  : () => {
+                      emitDigitalPaymentMethod(selectedDigitalMethod);
+                      setShowDigitalPayment(true);
+                    }
               }
               disabled={
-                isPending ||
-                (selectedMethod === "cash" && cashAmount < total)
+                isPending || (selectedMethod === "cash" && cashAmount < total)
               }
               className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white py-4 rounded-xl font-semibold text-xl transition-colors duration-200 flex items-center justify-center gap-3"
             >

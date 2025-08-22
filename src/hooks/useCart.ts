@@ -1,14 +1,14 @@
-import { useState, useCallback } from 'react';
-import { Product, CartItem } from '../types';
+import { useState, useCallback } from "react";
+import { Product, CartItem } from "../types";
 
 export const useCart = () => {
   const [items, setItems] = useState<CartItem[]>([]);
 
   const addItem = useCallback((product: Product) => {
-    setItems(prev => {
-      const existingItem = prev.find(item => item.id === product.id);
+    setItems((prev) => {
+      const existingItem = prev.find((item) => item.id === product.id);
       if (existingItem) {
-        return prev.map(item =>
+        return prev.map((item) =>
           item.id === product.id
             ? { ...item, quantity: item.quantity + 1 }
             : item
@@ -20,26 +20,27 @@ export const useCart = () => {
 
   const updateQuantity = useCallback((id: string, quantity: number) => {
     if (quantity === 0) {
-      setItems(prev => prev.filter(item => item.id !== id));
+      setItems((prev) => prev.filter((item) => item.id !== id));
     } else {
-      setItems(prev =>
-        prev.map(item =>
-          item.id === id ? { ...item, quantity } : item
-        )
+      setItems((prev) =>
+        prev.map((item) => (item.id === id ? { ...item, quantity } : item))
       );
     }
   }, []);
 
   const removeItem = useCallback((id: string) => {
-    setItems(prev => prev.filter(item => item.id !== id));
+    setItems((prev) => prev.filter((item) => item.id !== id));
   }, []);
 
   const clearCart = useCallback(() => {
     setItems([]);
   }, []);
 
-  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const tax = subtotal * 0.0085; // 8.5% tax
+  const subtotal = items.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
+  const tax = subtotal * 0.005; // 5% tax
   const total = subtotal + tax;
 
   return {
@@ -50,6 +51,6 @@ export const useCart = () => {
     clearCart,
     subtotal,
     tax,
-    total
+    total,
   };
 };

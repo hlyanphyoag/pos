@@ -1,20 +1,19 @@
-import React, { useState } from 'react';
-import { useNavigate } from '@tanstack/react-router';
-import { useAuth } from '../hooks/useAuth';
-import { LogIn, Mail, Lock, Store, AlertCircle } from 'lucide-react';
+import React, { useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
+import { useAuth } from "../hooks/useAuth";
+import { LogIn, Mail, Lock, Store, AlertCircle } from "lucide-react";
 
 export const LoginForm: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const { login, isPending, loginError } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await login({ email, password });
-    navigate({ to: '/' });
+    navigate({ to: "/" });
   };
-
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
@@ -23,7 +22,7 @@ export const LoginForm: React.FC = () => {
           <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <Store className="text-white" size={32} />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">QuickPOS</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">A&E Mart</h1>
           <p className="text-gray-600">Sign in to your account</p>
         </div>
 
@@ -40,7 +39,10 @@ export const LoginForm: React.FC = () => {
               Email Address
             </label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+              <Mail
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                size={20}
+              />
               <input
                 type="email"
                 value={email}
@@ -57,7 +59,10 @@ export const LoginForm: React.FC = () => {
               Password
             </label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+              <Lock
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                size={20}
+              />
               <input
                 type="password"
                 value={password}

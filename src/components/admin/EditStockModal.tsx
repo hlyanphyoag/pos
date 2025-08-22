@@ -39,7 +39,7 @@ export const EditStockModal: React.FC<EditStockModalProps> = ({
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-     
+
     if (changeType !== "set" && (!stockChange || parseInt(stockChange) <= 0)) {
       newErrors.stockChange = "Valid quantity is required";
     }
@@ -93,7 +93,6 @@ export const EditStockModal: React.FC<EditStockModalProps> = ({
       changeType === "set"
         ? onPriceEdit(item.id, parseInt(newPrice))
         : onUpdateStock(item.id, newStock, fullReason);
-
     } catch (error) {
       console.error("Error updating stock:", error);
     } finally {
@@ -133,7 +132,7 @@ export const EditStockModal: React.FC<EditStockModalProps> = ({
   console.log("stockChange:", stockChange);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-auto">
       <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 max-w-lg w-full">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
