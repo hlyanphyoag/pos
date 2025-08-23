@@ -83,7 +83,7 @@ function AdminApp() {
       <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
         <Sidebar activeView={activeView} onViewChange={setActiveView} />
         <main className="flex-1 overflow-auto">
-          <div className="p-8 dark:bg-gray-900 min-h-full">
+          <div className="p-8 dark:bg-gray-900 min-h-full ">
             {renderContent()}
           </div>
         </main>
