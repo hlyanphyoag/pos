@@ -15,6 +15,7 @@ import {
   useProductQuery,
 } from "../../services/productService/product.query";
 import { useAuth } from "../../hooks/useAuth";
+import Pagination from "../Pagination";
 
 // Skeleton Components
 const ProductSkeleton = () => (
@@ -152,8 +153,11 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
   const [searchTermDebounce, setSearchTermDebounce] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [sortBy, setSortBy] = useState<"name" | "price">("name");
+  const [page, setPage] = useState(1);
 
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const itemsPerPage = 10;
+
 
   const {
     data: categories,
@@ -165,12 +169,14 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
     isPending,
     isError,
   } = useProductQuery(
-    null,
-    null,
+    page,
+    itemsPerPage,
     searchTermDebounce,
     selectedCategory === "All" ? null : selectedCategory,
     sortBy
   );
+
+  const totalPages = Math.ceil(productData?.totalElements!/itemsPerPage)
 
   // console.log("Categories:", categories)
 
@@ -311,12 +317,16 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                   className="min-w-[160px]"
                 />
 
-                <div className="flex items-center gap-2 bg-gradient-to-r from-green-50 to-emerald-50 px-4 py-3 rounded-xl border border-green-100 shadow-sm">
+                {/* <div className="flex items-center gap-2 bg-gradient-to-r from-green-50 to-emerald-50 px-4 py-3 rounded-xl border border-green-100 shadow-sm">
                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                   <span className="text-sm font-semibold text-green-700">
                     {productData?.results?.length || 0} products found
                   </span>
-                </div>
+                </div> */}
+                <Pagination
+            currentPage={page}
+            totalPages={totalPages}
+            setCurrentPage={setPage} />
               </>
             )}
           </div>
@@ -388,6 +398,9 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                     </div>
                   );
                 })}
+                <div className='mb-10'>
+          
+        </div>
               </div>
             ) : (
               <div className="space-y-3">

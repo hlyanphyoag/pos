@@ -9,7 +9,8 @@ import {
   Store,
   LogOut,
   Sun,
-  Moon
+  Moon,
+  CreditCard
 } from 'lucide-react';
 import { AdminView } from '../../types/admin';
 import { useAuth } from '../../hooks/useAuth';
@@ -38,7 +39,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange }) =>
     { id: 'inventory' as AdminView, icon: Package, label: 'Inventory' },
     { id: 'sales' as AdminView, icon: TrendingUp, label: 'Sales' },
     { id: 'users' as AdminView, icon: Users, label: 'Users' },
-    { id: 'settings' as AdminView, icon: Settings, label: 'Settings' },
+    { id: 'settings' as AdminView, icon: CreditCard, label: 'payment' },
   ];
 
   return (

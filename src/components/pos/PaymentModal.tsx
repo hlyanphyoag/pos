@@ -150,8 +150,8 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       total,
       paymentDetails: completedPaymentDetails,
       timestamp: new Date(),
-      storeName: "QuickPOS Store",
-      storeAddress: "123 Main Street, City, State 12345",
+      storeName: "A&E Mart",
+      storeAddress: "No.112, Main Street, Dawei, Tanintharyi",
       cashierName: authState.user?.name || "Cashier",
     };
 

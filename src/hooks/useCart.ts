@@ -40,7 +40,7 @@ export const useCart = () => {
     (sum, item) => sum + item.price * item.quantity,
     0
   );
-  const tax = subtotal * 0.005; // 5% tax
+  const tax = subtotal * 0.05; // 5% tax
   const total = subtotal + tax;
 
   return {

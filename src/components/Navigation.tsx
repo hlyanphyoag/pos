@@ -34,7 +34,7 @@ export const Navigation: React.FC = () => {
         ];
       case 'CASHIER':
         return [
-          { to: '/pos', icon: Monitor, label: 'POS System' },
+          { to: '/pos', icon: Monitor, label: 'POS Interface' },
         ];
       case 'CUSTOMER':
         return [

@@ -69,7 +69,7 @@ export const CustomerDisplay: React.FC<CustomerDisplayProps> = React.memo(
 
     return (
       <div className="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen p-8 rounded-lg shadow-lg mb-10">
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           {/* Header */}
           <div className="text-center mb-8">
             <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -103,7 +103,7 @@ export const CustomerDisplay: React.FC<CustomerDisplayProps> = React.memo(
                         <div className="absolute top-0 left-0 w-2 h-2 bg-green-500 rounded-full animate-ping"></div>
                       </div>
                       <p className="text-lg text-green-600 font-semibold">
-                        ${memoizedCartData.cart[0].price.toFixed(2)}
+                        {memoizedCartData.cart[cartData.cart.length - 1].price.toFixed(0)} MMK
                       </p>
                     </div>
                     <div className="text-right relative">
@@ -136,14 +136,23 @@ export const CustomerDisplay: React.FC<CustomerDisplayProps> = React.memo(
                     </p>
                   </div>
                 ) : (
-                  <div className="divide-y divide-gray-100">
-                    {memoizedCartData?.cart.map((item: any, index: number) => (
-                      <div
-                        key={`${item.id}-${index}`}
-                        className="p-6 hover:bg-gray-50 transition-colors"
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-4">
+                  <table className="w-full">
+                    <thead>
+                      <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {memoizedCartData?.cart.map((item: any, index: number) => (
+                        <tr
+                          key={`${item.id}-${index}`}
+                          className="hover:bg-gray-50 transition-colors"
+                        >
+                          <td className="p-6">
                             <div className="w-12 h-12 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl flex items-center justify-center">
                               <img
                                 src={item.image}
@@ -151,39 +160,37 @@ export const CustomerDisplay: React.FC<CustomerDisplayProps> = React.memo(
                                 className="w-12 h-12 object-cover rounded-xl"
                               />
                             </div>
+                          </td>
+                          <td className="p-6">
                             <div>
                               <h3 className="text-lg font-semibold text-gray-900">
                                 {item.name}
                               </h3>
                               <p className="text-gray-500">{item.category}</p>
                             </div>
-                          </div>
-                          <div className="text-right">
-                            <div className="flex items-center gap-4">
-                              <div className="text-center">
-                                <p className="text-sm text-gray-500">Qty</p>
-                                <p className="text-lg font-bold text-gray-900">
-                                  {item.quantity}
-                                </p>
-                              </div>
-                              <div className="text-center">
-                                <p className="text-sm text-gray-500">Price</p>
-                                <p className="text-lg font-bold text-gray-900">
-                                  {item.price} MMK
-                                </p>
-                              </div>
-                              <div className="text-center min-w-[80px]">
-                                <p className="text-sm text-gray-500">Total</p>
-                                <p className="text-xl font-bold text-blue-600">
-                                  {item.price * item.quantity} MMK
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                          </td>
+                          <td className="p-6 text-center">
+                            <p className="text-sm text-gray-500">Qty</p>
+                            <p className="text-lg font-bold text-gray-900">
+                              {item.quantity}
+                            </p>
+                          </td>
+                          <td className="p-6 text-center">
+                            <p className="text-sm text-gray-500">Price</p>
+                            <p className="text-lg font-bold text-gray-900">
+                              {item.price} MMK
+                            </p>
+                          </td>
+                          <td className="p-6 text-center">
+                            <p className="text-sm text-gray-500">Total</p>
+                            <p className="text-xl font-bold text-blue-600">
+                              {item.price * item.quantity} MMK
+                            </p>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 )}
               </div>
 
@@ -203,7 +210,7 @@ export const CustomerDisplay: React.FC<CustomerDisplayProps> = React.memo(
                       </span>
                     </div>
                     <div className="flex justify-between items-center text-lg">
-                      <span className="text-gray-600">Tax (8.5%):</span>
+                      <span className="text-gray-600">Tax (5%):</span>
                       <span className="font-semibold text-gray-900">
                         {memoizedCartData.tax.toFixed(0)} MMK
                       </span>

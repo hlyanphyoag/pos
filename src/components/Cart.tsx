@@ -98,15 +98,15 @@ export const Cart: React.FC<CartProps> = ({
       <div className="border-t pt-4 space-y-2">
         <div className="flex justify-between text-gray-600">
           <span>Subtotal:</span>
-          <span>{subtotal.toFixed(2)} MMK</span>
+          <span>{subtotal.toFixed(0)} MMK</span>
         </div>
         <div className="flex justify-between text-gray-600">
           <span>Tax (5%):</span>
-          <span>{tax.toFixed(2)} MMK</span>
+          <span>{tax.toFixed(0)} MMK</span>
         </div>
         <div className="flex justify-between text-xl font-bold text-gray-900 pt-2 border-t">
           <span>Total:</span>
-          <span>{total.toFixed(2)} MMK</span>
+          <span>{total.toFixed(0)} MMK</span>
         </div>
       </div>
 
