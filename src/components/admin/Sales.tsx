@@ -107,6 +107,9 @@ export const Sales: React.FC<SalesProps> = () => {
                   Total
                 </th>
                 <th className="text-left py-3 px-6 font-semibold text-gray-500 dark:text-white">
+                  Profit
+                </th>
+                <th className="text-left py-3 px-6 font-semibold text-gray-500 dark:text-white">
                   Payment method
                 </th>
                 <th className="text-left py-3 px-6 font-semibold text-gray-500 dark:text-white">
@@ -200,7 +203,12 @@ export const Sales: React.FC<SalesProps> = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-semibold text-gray-900 dark:text-white">
-                          {formatNumber(data.total)} <span className="text-gray-500 text-xs">MMK</span>
+                          {formatNumber(data?.total)} <span className="text-gray-500 text-xs">MMK</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-semibold text-gray-900 dark:text-white">
+                          {formatNumber(data?.profit)} <span className="text-gray-500 text-xs">MMK</span>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">

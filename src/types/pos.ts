@@ -1,4 +1,4 @@
-  import { UserRole } from "./auth";
+import { UserRole } from "./auth";
 
 export interface ScannedProduct {
   id: string;
@@ -48,14 +48,14 @@ export type InventoryCategory = "OTHER" | "FOOD" | "DRINK" | "HOUSEHOLD" | "STAT
 
 export type SaleCategory = "TODAY" | "YESTERDAY" | "LAST WEEK" | "LAST MONTH" | "LAST YEAR";
 
-export type TransactionCategory = "KPay" | "WavePay" 
+export type TransactionCategory = "KPay" | "WavePay"
 
 export type TransactionType = "Transfer" | "Received";
 
 export type FilterTypes = "Date" | "Week" | "Month"
 
 
-export interface Product{
+export interface Product {
   id: string;
   name: string;
   sku: string;
@@ -83,11 +83,11 @@ export interface ProductPayload {
 export interface ProductApiResponse {
   page: number;
   size: number;
-  totalElements : number;
+  totalElements: number;
   total: number;
-  elements : number;
-  nextPage : number | null;
-  results : Product[];
+  elements: number;
+  nextPage: number | null;
+  results: Product[];
 }
 
 export interface ProductLowStock {
@@ -101,107 +101,109 @@ export interface ProductLowStock {
 
 //Sales 
 
-export interface GetSaleApiResponse{
-    id: string;
-    cashierId: string;
-    total: number;
-    paid: boolean;
-    createdAt: Date;
-    updatedAt: Date;
-    items: [
-      {
-        id: string;
-        saleId: string;
-        productId: string;
-        quantity: number;
-        price: number;
-        createdAt: Date;
-        updatedAt: Date;
-        product: Product
-      }
-    ],
-    paymentType: {
+export interface GetSaleApiResponse {
+  id: string;
+  cashierId: string;
+  total: number;
+  paid: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  items: [
+    {
       id: string;
-      type: string;
-      imageUrl: string;
-      isActive: boolean;
+      saleId: string;
+      productId: string;
+      quantity: number;
+      price: number;
       createdAt: Date;
       updatedAt: Date;
+      product: Product
     }
-    cashier: {
-      name: string;
-      email: string;
-    }
+  ],
+  paymentType: {
+    id: string;
+    type: string;
+    imageUrl: string;
+    isActive: boolean;
+    createdAt: Date;
+    updatedAt: Date;
   }
+  cashier: {
+    name: string;
+    email: string;
+  }
+  revenue: number;
+  profit: number
+}
 
-  // "page": 1,
-  //   "size": 5,
-  //   "totalPages": 1,
-  //   "totalElements": 2,
-  //   "total": 8,
-  //   "elements": 2,
-  //   "nextPage": null,
-  //   "totalSales": 2,
-  //   "totalTransactions": 2,
-  //   "totalRevenue": 4.98,
-  //   "totalProfit": 0,
+// "page": 1,
+//   "size": 5,
+//   "totalPages": 1,
+//   "totalElements": 2,
+//   "total": 8,
+//   "elements": 2,
+//   "nextPage": null,
+//   "totalSales": 2,
+//   "totalTransactions": 2,
+//   "totalRevenue": 4.98,
+//   "totalProfit": 0,
 
 export interface SaleApiResponse {
   page: number;
   size: number;
   totalPages: number;
-  totalElements : number;
+  totalElements: number;
   total: number;
-  elements : number;
-  nextPage : number | null;
-  totalSales : number;
-  totalTransactions : number;
-  totalRevenue : number;
-  totalProfit : number;
-  results : GetSaleApiResponse[]
+  elements: number;
+  nextPage: number | null;
+  totalSales: number;
+  totalTransactions: number;
+  totalRevenue: number;
+  totalProfit: number;
+  results: GetSaleApiResponse[]
 }
 
 export interface SalePayloadItems {
-  productId : string;
+  productId: string;
   quantity: number
 }
 
 export interface SalePayload {
-  items : SalePayloadItems[];
-  paid : boolean
+  items: SalePayloadItems[];
+  paid: boolean
   paymentType: "Cash" | "KPay" | 'WavePay' | 'qr'
 }
 
 export interface SaleApiResponseItems {
-  id : string;
-  saleId : string;
-  productId : string;
-  quantity : number;
-  price : number;
-  createdAt : Date;
-  updatedAt : Date;
-  product : Product
+  id: string;
+  saleId: string;
+  productId: string;
+  quantity: number;
+  price: number;
+  createdAt: Date;
+  updatedAt: Date;
+  product: Product
 }
 
 export interface SaleCashier {
-  name : string;
-  email : string;
-  profilePic : string;
-  role : UserRole
+  name: string;
+  email: string;
+  profilePic: string;
+  role: UserRole
 }
 
 export interface SaleApiResponse {
-  id : string;
-  cashierId : string;
-  total : number;
-  paid : boolean;
-  createdAt : Date;
-  updatedAt : Date;
-  items : SaleApiResponseItems[];
-  cashier : SaleCashier;
+  id: string;
+  cashierId: string;
+  total: number;
+  paid: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  items: SaleApiResponseItems[];
+  cashier: SaleCashier;
 }
 
-export interface  StockUpdateResponse {
+export interface StockUpdateResponse {
   id: string;
   productId: string;
   quantity: number;
@@ -234,25 +236,25 @@ export interface DashboardRecentActivity {
   type: string;
   description: string;
   timestamp: Date;
-  metadata : {
+  metadata: {
     productId: string;
     quantity: number;
-    addedById : string;
-    cashier : string;
-    saleId : string;
-    amount : number;
-    userId : string;
-    email : string;
-    role : UserRole
+    addedById: string;
+    cashier: string;
+    saleId: string;
+    amount: number;
+    userId: string;
+    email: string;
+    role: UserRole
   }
 }
 
 
 export interface PaymentInfoType {
   id: string,
-  type : string,
-  imageUrl : string,
-  isActive : boolean,
+  type: string,
+  imageUrl: string,
+  isActive: boolean,
   createdAt: Date,
   updatedAt: Date
 }

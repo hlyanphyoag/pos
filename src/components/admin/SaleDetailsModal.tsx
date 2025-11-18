@@ -145,6 +145,12 @@ export const SaleDetailsModal: React.FC<SaleDetailsModalProps> = ({
                 {sale.total.toLocaleString()} MMK
               </span>
             </div>
+            <div className="flex items-center mt-2 justify-between">
+              <span className="text-green-500 dark:text-blue-400 font-medium text-md">Profit</span>
+              <span className="text-xl font-bold text-green-500 dark:text-blue-400">
+                {sale.profit.toLocaleString()} MMK
+              </span>
+            </div>
             <div className="flex items-center justify-between mt-2">
               <span className="text-sm text-gray-600 dark:text-gray-400">Payment Status</span>
               <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${

@@ -163,7 +163,7 @@ const Transaction = () => {
                   Amount
                 </th>
                 <th className="text-left py-3 px-6 font-semibold text-gray-500 dark:text-white">
-                  Revenue
+                  Profit
                 </th>
               </tr>
             </thead>

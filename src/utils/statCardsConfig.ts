@@ -77,7 +77,7 @@ export const getDashboardStatCards = (stats: DashboardStats | undefined) => [
 export const getSalesStatCards = (stats: SaleApiResponse | undefined) => [
   {
     title: "Total Sales",
-    value: `${stats?.totalTransactions}`,
+    value: `${stats?.totalTransactions  ?? 0}`,
     icon: DollarSign,
     change: '+12.5%',
     positive: true,
@@ -85,7 +85,7 @@ export const getSalesStatCards = (stats: SaleApiResponse | undefined) => [
   },
   {
     title: "Total Sales Amount",
-    value: stats?.totalRevenue,
+    value: stats?.totalRevenue ?? 0,
     icon: ShoppingCart,
     change: '+8.2%',
     positive: true,
@@ -94,7 +94,7 @@ export const getSalesStatCards = (stats: SaleApiResponse | undefined) => [
   },
   {
     title: 'Total Sales Profits',
-    value: stats?.totalProfit,
+    value: stats?.totalProfit ?? 0,
     icon: TrendingUp,
     change: '+3.4%',
     positive: true,
@@ -124,7 +124,7 @@ export const getTransactionStatsCard = (stats: TransactionStats | undefined, typ
       moneyOrNot: true
     },
     {
-      title: `Today's ${type ? type : 'Transfer'} Revenue`,
+      title: `Today's ${type ? type : 'Transfer'} Profit`,
       value: `${stats?.serviceTypeBreakdown[0]?.totalRevenue ? stats?.serviceTypeBreakdown[0]?.totalRevenue : 0 }`,
       icon: DollarSignIcon,
       change: '+12.5%',
