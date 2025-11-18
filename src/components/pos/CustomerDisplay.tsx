@@ -11,7 +11,7 @@ interface CustomerDisplayProps {
 export const CustomerDisplay: React.FC<CustomerDisplayProps> = React.memo(
   ({
     // display,
-    storeName = "A&E Mart",
+    storeName = "QuickPOS",
   }) => {
     const { authState } = useAuth();
     const userId = authState?.user?.id;

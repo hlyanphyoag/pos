@@ -6,10 +6,12 @@ import { CustomDropDown } from '../CustomDropDown';
 import { useUploadImageMutation } from '../../services/imageService/image.mutation';
 import { useAddProductMutation } from '../../services/productService/product.mutation';
 import { useQueryClient } from '@tanstack/react-query';
+import { Button } from '../ui/button';
+import { toast } from 'sonner';
 
 
 
-const UploadImageSkeleton = () => (
+export const UploadImageSkeleton = () => (
   <div className='flex items-center justify-center'>
     <div className="h-48 bg-gray-200 dark:bg-gray-700  rounded-xl animate-pulse w-48 shadow-sm"></div>
   </div>
@@ -29,6 +31,7 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({
     sku: '',
     description: '',
     image: '',
+    import_price: '',
     price: '',
     stock: '',
     category: ''
@@ -39,7 +42,7 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({
 
   const { mutate: createProductMutation } = useAddProductMutation();
 
-    const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const queryClient = useQueryClient();
 
@@ -47,7 +50,7 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({
   console.log("Selected Category:", selectedCategory)
 
   const { data: categories } = useProductCategoriesQuery();
-  const {mutate: uploadImageMutation, isPending: isUploadingImage} = useUploadImageMutation()
+  const { mutate: uploadImageMutation, isPending: isUploadingImage } = useUploadImageMutation()
 
   console.log("FormData:", formData)
 
@@ -60,6 +63,9 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({
     }
     if (!formData.sku.trim()) {
       newErrors.sku = 'SKU is required';
+    }
+    if (!formData.import_price || parseFloat(formData.import_price) <= 0) {
+      newErrors.import_price = 'Valid import price is required';
     }
     if (!formData.category) {
       newErrors.category = 'Category is required';
@@ -86,45 +92,50 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({
 
     setIsSubmitting(true);
 
-      const newProduct: Omit<Product, 'id' | 'createdAt' | 'updatedAt'> = {
-        name: formData.name.trim(),
-        sku: formData.sku.trim(),
-        description: formData.description.trim(),
-        image: formData.image,
-        price: parseFloat(formData.price),
-        stock: parseInt(formData.stock),
-        category: formData.category as Category
-      };
+    const newProduct: Omit<Product, 'id' | 'createdAt' | 'updatedAt'> = {
+      name: formData.name.trim(),
+      sku: formData.sku.trim(),
+      description: formData.description.trim(),
+      image: formData.image,
+      price: parseFloat(formData.price),
+      import_price: parseFloat(formData.import_price),
+      stock: parseInt(formData.stock),
+      category: formData.category as Category
+    };
 
-      createProductMutation(
-        newProduct,
-        {
-          onSuccess: (data) => {
-            console.log("Product Added:", data)
-            setFormData({
-              name: '',
-              sku: '',
-              description: '',
-              image: '',
-              price: '',
-              stock: '',
-              category: 'All'
-            });
-            setErrors({});
-            setImagePreview(null);
-            setIsSubmitting(false);
-            queryClient.invalidateQueries({
-              queryKey: ['products']
-            })
-            onClose();
-          },
-          onError: (error) => {
-            console.log("Error:", error)
-            setErrors({error: error.response?.data?.message || 'An error occurred'});
-            setIsSubmitting(false);
-          }
+    createProductMutation(
+      newProduct,
+      {
+        onSuccess: (data) => {
+          console.log("Product Added:", data)
+          setFormData({
+            name: '',
+            sku: '',
+            description: '',
+            image: '',
+            price: '',
+            import_price: '',
+            stock: '',
+            category: 'All'
+          });
+          setErrors({});
+          setImagePreview(null);
+          setIsSubmitting(false);
+          toast.info("Product created succefully!", {
+            position:"top-right",
+          })
+          queryClient.invalidateQueries({
+            queryKey: ['products']
+          })
+          onClose();
+        },
+        onError: (error) => {
+          console.log("Error:", error)
+          setErrors({ error: error.response?.data?.message || 'An error occurred' });
+          setIsSubmitting(false);
         }
-      )
+      }
+    )
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -143,7 +154,7 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({
       }
 
       uploadImageMutation(
-        file, 
+        file,
         {
           onSuccess: (data) => {
             console.log("Image Uploaded:", data.url)
@@ -171,7 +182,7 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({
     const randomNumber = Math.floor(Math.random() * 10000); // 0-9999
     const paddedNumber = randomNumber.toString().padStart(4, '0'); // Ensure 4 digits with leading zeros
     const generatedSKU = `SKU${paddedNumber}`;
-    
+
     setFormData(prev => ({ ...prev, sku: generatedSKU }));
   };
 
@@ -229,47 +240,74 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({
               </div>
 
               {/* SKU */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  SKU *
-                </label>
-                <div className='flex items-center gap-2'>
-                  <input
-                    type="text"
-                    value={formData.sku}
-                    onChange={(e) => handleInputChange('sku', e.target.value)}
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white ${errors.sku ? 'border-red-500' : 'border-gray-200 dark:border-gray-600'
-                      }`}
-                    placeholder="Enter SKU (e.g., P0001)"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleGenerateSKU}
-                    className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors cursor-pointer"
-                  >
-                    Generate
-                  </button>
-                </div>
-                {errors.sku && (
-                  <div className="flex items-center gap-2 mt-2 text-red-600 dark:text-red-400">
-                    <AlertCircle size={16} />
-                    <span className="text-sm">{errors.sku}</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Category */}
-              <div className='flex gap-2 justify-between'>
-                <div>
+              <div className='flex gap-2'>
+                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Category *
                   </label>
                   <CustomDropDown
-                    categories={categories} 
+                    categories={categories}
                     selectedCategory={formData.category}
                     setSelectedCategory={(category) => handleInputChange('category', category)}
                     origin='add_product'
+                    noIcon={true}
                   />
+                </div>
+
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    SKU *
+                  </label>
+                  <div className='flex items-center gap-2'>
+                    <input
+                      type="text"
+                      value={formData.sku}
+                      onChange={(e) => handleInputChange('sku', e.target.value)}
+                      className={`w-[312px] px-4 py-[5px] border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white ${errors.sku ? 'border-red-500' : 'border-gray-200 dark:border-gray-600'
+                        }`}
+                      placeholder="Enter SKU (e.g., P0001)"
+                    />
+                    <Button
+                      type="button"
+                      onClick={handleGenerateSKU}
+                      variant={"custom"}
+                    >
+                      Generate
+                    </Button>
+                  </div>
+                  {errors.sku && (
+                    <div className="flex items-center gap-2 mt-2 text-red-600 dark:text-red-400">
+                      <AlertCircle size={16} />
+                      <span className="text-sm">{errors.sku}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Category */}
+              <div className='flex gap-2 justify-between'>
+                {/* import Price */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Import Price ($) *
+                  </label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={formData.import_price}
+                    onChange={(e) => handleInputChange('import_price', e.target.value)}
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white ${errors.import_price ? 'border-red-500' : 'border-gray-200 dark:border-gray-600'
+                      }`}
+                    placeholder="0.00"
+                  />
+                  {errors.price && (
+                    <div className="flex items-center gap-2 mt-2 text-red-600 dark:text-red-400">
+                      <AlertCircle size={16} />
+                      <span className="text-sm">{errors.import_price}</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Price */}
@@ -339,7 +377,7 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({
                 </label>
                 <div className="space-y-4">
                   {isUploadingImage ? (
-                   <UploadImageSkeleton />
+                    <UploadImageSkeleton />
                   ) : imagePreview ? (
                     <div className="relative flex items-center justify-center">
                       <img
@@ -397,10 +435,10 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({
             >
               Cancel
             </button>
-            <button
+            <Button
               type="submit"
               disabled={isSubmitting}
-              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+              variant={"custom"}
             >
               {isSubmitting ? (
                 <>
@@ -413,7 +451,7 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({
                   Add Product
                 </>
               )}
-            </button>
+            </Button>
           </div>
         </form>
       </div>

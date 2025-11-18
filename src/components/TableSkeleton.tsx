@@ -1,7 +1,7 @@
 export const TableSkeleton = () => {
   return (
     <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-      {[...Array(8)].map((_, rowIndex) => (
+      {[...Array(3)].map((_, rowIndex) => (
         <tr key={rowIndex} className="animate-pulse">
           {/* Sale ID Column */}
           <td className="px-6 py-4 whitespace-nowrap">

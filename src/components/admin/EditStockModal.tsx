@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { X, Package, AlertCircle, Plus, Minus } from "lucide-react";
+import { X, Package, AlertCircle, Plus, Minus, DollarSignIcon } from "lucide-react";
 import { Product } from "../../types/pos";
+import { Button } from "../ui/button";
 
 interface EditStockModalProps {
   isOpen: boolean;
@@ -26,11 +27,11 @@ export const EditStockModal: React.FC<EditStockModalProps> = ({
   );
   const [reason, setReason] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (isOpen && item) {
       setStockChange("");
+      setNewPrice("");
       setChangeType("add");
       setReason("");
       setErrors({});
@@ -78,25 +79,20 @@ export const EditStockModal: React.FC<EditStockModalProps> = ({
   //   return item.price + inputPrice;
   // }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!item || !validateForm()) {
+    if (!item || !validateForm() || isPending) {
       return;
     }
 
-    setIsSubmitting(true);
-
-    try {
-      const newStock = calculateNewStock();
-      const fullReason = `${changeType === "add" ? "Added" : changeType === "subtract" ? "Removed" : "Set to"} ${stockChange} units - ${reason}`;
-      changeType === "set"
-        ? onPriceEdit(item.id, parseInt(newPrice))
-        : onUpdateStock(item.id, newStock, fullReason);
-    } catch (error) {
-      console.error("Error updating stock:", error);
-    } finally {
-      setIsSubmitting(false);
+    const newStock = calculateNewStock();
+    const fullReason = `${changeType === "add" ? "Added" : changeType === "subtract" ? "Removed" : "Set to"} ${stockChange} units - ${reason}`;
+    
+    if (changeType === "set") {
+      onPriceEdit(item.id, parseInt(newPrice));
+    } else {
+      onUpdateStock(item.id, newStock, fullReason);
     }
   };
 
@@ -133,7 +129,7 @@ export const EditStockModal: React.FC<EditStockModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-auto">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 max-w-lg w-full">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 max-w-lg w-full max-h-[90vh] overflow-auto">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center">
@@ -220,8 +216,8 @@ export const EditStockModal: React.FC<EditStockModalProps> = ({
                     : "border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 text-gray-700 dark:text-gray-300"
                 }`}
               >
-                <Package size={20} />
-                <span className="text-sm font-medium">Set To</span>
+                <DollarSignIcon size={20} />
+                <span className="text-sm font-medium">Edit Price</span>
               </button>
             </div>
           </div>
@@ -337,23 +333,22 @@ export const EditStockModal: React.FC<EditStockModalProps> = ({
             >
               Cancel
             </button>
-            <button
+            <Button
               type="submit"
-              disabled={isSubmitting || isPending}
-              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+              disabled={isPending}
+              variant={"custom"}
             >
-              {isSubmitting || isPending ? (
+              {isPending ? (
                 <>
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                   Updating...
                 </>
               ) : (
                 <>
-                  {/* <Save size={20} /> */}
                   Update {changeType === "set" ? "Price" : "Stock"}
                 </>
               )}
-            </button>
+            </Button>
           </div>
         </form>
       </div>

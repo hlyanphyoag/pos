@@ -23,15 +23,15 @@ export const useThemeProvider = () => {
     // Check localStorage first
     const stored = localStorage.getItem('quickpos_theme');
     if (stored === 'light' || stored === 'dark') {
-      return stored;
+      return 'light'; 
     }
     // Check system preference
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    return 'light';
   });
 
   useEffect(() => {
     localStorage.setItem('quickpos_theme', theme);
-    
+
     // Apply theme to document
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
@@ -56,3 +56,5 @@ export const useThemeProvider = () => {
 };
 
 export { ThemeContext };
+
+

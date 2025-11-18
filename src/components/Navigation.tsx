@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useRouter } from '@tanstack/react-router';
+import { Link, useLocation, useRouter } from '@tanstack/react-router';
 import { useAuth } from '../hooks/useAuth';
 import { 
   Store, 
@@ -7,12 +7,15 @@ import {
   User, 
   ShoppingCart, 
   BarChart3, 
-  Monitor 
+  Monitor, 
+  ArrowUpDown
 } from 'lucide-react';
 
 export const Navigation: React.FC = () => {
   const { authState, logout } = useAuth();
   const router = useRouter();
+  const pathName = useLocation().pathname;
+
 
   if (!authState.isAuthenticated) {
     return null;
@@ -34,7 +37,7 @@ export const Navigation: React.FC = () => {
         ];
       case 'CASHIER':
         return [
-          { to: '/pos', icon: Monitor, label: 'POS Interface' },
+          pathName === '/pos' ? { to: '/pos/transctions', icon: ArrowUpDown, label: 'Kpay/Wavepay' } : { to: '/pos', icon: Monitor, label: 'POS System' }
         ];
       case 'CUSTOMER':
         return [
@@ -48,7 +51,7 @@ export const Navigation: React.FC = () => {
   const navItems = getNavItems();
 
   return (
-    <nav className="bg-white shadow-sm border-b">
+    <nav className="bg-white shadow-sm  fixed top-0 right-0 left-0 z-50">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-8">
@@ -56,7 +59,7 @@ export const Navigation: React.FC = () => {
               <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                 <Store className="text-white" size={20} />
               </div>
-              <span className="text-xl font-bold text-gray-900">A&E Mart</span>
+              <span className="text-xl font-bold text-gray-900">QucikPOS</span>
             </Link>
             
             <div className="flex items-center gap-4">
@@ -64,7 +67,7 @@ export const Navigation: React.FC = () => {
                 <Link
                   key={to}
                   to={to}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 transition-colors text-xs font-medium"
                   activeProps={{
                     className: 'bg-blue-50 text-blue-600 hover:text-blue-700'
                   }}

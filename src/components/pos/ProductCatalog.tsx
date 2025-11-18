@@ -16,19 +16,20 @@ import {
 } from "../../services/productService/product.query";
 import { useAuth } from "../../hooks/useAuth";
 import Pagination from "../Pagination";
+import { formatNumber } from "@/utils/formatNumberHelper";
 
 // Skeleton Components
 const ProductSkeleton = () => (
-  <div className="bg-white rounded-xl p-4 border border-gray-200 animate-pulse">
+  <div className="bg-white rounded-xl p-4 border border-gray-200 animate-pulse flex flex-col min-h-[320px]">
     <div className="aspect-square bg-gray-200 rounded-lg mb-3"></div>
-    <div className="space-y-2">
+    <div className="flex flex-col flex-1 space-y-2">
       <div className="h-4 bg-gray-200 rounded w-3/4"></div>
       <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-2 mt-auto">
         <div className="h-5 bg-gray-200 rounded w-1/3"></div>
         <div className="h-4 bg-gray-200 rounded w-1/4"></div>
       </div>
-      <div className="h-10 bg-gray-200 rounded-lg"></div>
+      <div className="h-10 bg-gray-200 rounded-lg mt-2"></div>
     </div>
   </div>
 );
@@ -42,16 +43,16 @@ const ProductListSkeleton = () => (
     {[...Array(6)].map((_, index) => (
       <div
         key={index}
-        className="flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-200 animate-pulse"
+        className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 p-4 bg-white rounded-xl border border-gray-200 animate-pulse"
       >
-        <div className="w-16 h-16 bg-gray-200 rounded-lg"></div>
-        <div className="flex-1 space-y-2">
+        <div className="w-20 h-20 sm:w-16 sm:h-16 flex-shrink-0 bg-gray-200 rounded-lg"></div>
+        <div className="flex-1 min-w-0 space-y-2">
           <div className="h-4 bg-gray-200 rounded w-3/4"></div>
           <div className="h-3 bg-gray-200 rounded w-1/2"></div>
         </div>
-        <div className="text-right space-y-2">
+        <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-start w-full sm:w-auto gap-3 sm:gap-2">
           <div className="h-5 bg-gray-200 rounded w-20"></div>
-          <div className="h-10 bg-gray-200 rounded-lg w-16"></div>
+          <div className="h-10 bg-gray-200 rounded-lg w-24"></div>
         </div>
       </div>
     ))}
@@ -238,7 +239,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
 
   return (
     <div className="bg-white rounded-2xl shadow-xl p-8 h-full">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between gap-8">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center">
             <Package className="text-white" size={24} />
@@ -262,7 +263,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
       </div>
 
       {/* Search and Filters */}
-      <div className="mb-6 space-y-4">
+      <div className="mb-6 space-y-4 mt-4">
         <div className="relative">
           <Search
             className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
@@ -277,21 +278,21 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
           />
         </div>
 
-        <div className="flex flex-wrap gap-4 items-center">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 bg-gradient-to-r from-blue-50 to-indigo-50 px-3 py-2 rounded-xl border border-blue-100">
-              <Filter size={18} className="text-blue-600" />
-              <span className="text-sm font-medium text-blue-700">Filters</span>
-            </div>
+        <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 items-stretch sm:items-center">
+          <div className="flex items-center gap-2 bg-gradient-to-r from-blue-50 to-indigo-50 px-3 py-2 rounded-xl border border-blue-100 flex-shrink-0">
+            <Filter size={18} className="text-blue-600" />
+            <span className="text-sm font-medium text-blue-700">Filters</span>
+          </div>
 
-            {isPendingCategories ? (
-              <div className="flex gap-3">
-                <CategorySkeleton />
-                <CategorySkeleton />
-                <CategorySkeleton />
-              </div>
-            ) : (
-              <>
+          {isPendingCategories ? (
+            <div className="flex gap-3 flex-wrap">
+              <CategorySkeleton />
+              <CategorySkeleton />
+              <CategorySkeleton />
+            </div>
+          ) : (
+            <>
+              <div className="flex flex-col sm:flex-row gap-3 flex-1 sm:flex-initial">
                 <CustomDropdown
                   value={selectedCategory}
                   onChange={setSelectedCategory}
@@ -303,7 +304,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                     })) || []),
                   ]}
                   placeholder="Select Category"
-                  className="min-w-[180px]"
+                  className="w-full sm:min-w-[180px]"
                 />
 
                 <CustomDropdown
@@ -314,22 +315,24 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                     { value: "price", label: "Sort by Price" },
                   ]}
                   placeholder="Sort Options"
-                  className="min-w-[160px]"
+                  className="w-full sm:min-w-[160px]"
                 />
+              </div>
 
-                {/* <div className="flex items-center gap-2 bg-gradient-to-r from-green-50 to-emerald-50 px-4 py-3 rounded-xl border border-green-100 shadow-sm">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="text-sm font-semibold text-green-700">
-                    {productData?.results?.length || 0} products found
-                  </span>
-                </div> */}
+              {/* <div className="flex items-center gap-2 bg-gradient-to-r from-green-50 to-emerald-50 px-4 py-3 rounded-xl border border-green-100 shadow-sm">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="text-sm font-semibold text-green-700">
+                  {productData?.results?.length || 0} products found
+                </span>
+              </div> */}
+              <div className="w-full sm:w-auto sm:ml-auto">
                 <Pagination
-            currentPage={page}
-            totalPages={totalPages}
-            setCurrentPage={setPage} />
-              </>
-            )}
-          </div>
+                  currentPage={page}
+                  totalPages={totalPages}
+                  setCurrentPage={setPage} />
+              </div>
+            </>
+          )}
         </div>
       </div>
 
@@ -337,7 +340,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
       <div className="flex-1 overflow-y-auto">
         {isPending ? (
           viewMode === "grid" ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2  xl:grid-cols-4 2xl:grid-cols-5 gap-4">
               {[...Array(8)].map((_, index) => (
                 <ProductSkeleton key={index} />
               ))}
@@ -348,20 +351,20 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
         ) : (
           <>
             {viewMode === "grid" ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 auto-rows-fr">
                 {productData?.results?.map((product) => {
                   const cartQuantity = getCartQuantity(product.id);
                   return (
                     <div
                       key={product.id}
-                      className="group bg-white rounded-xl p-4 hover:bg-gray-50 transition-all duration-300 hover:shadow-xl border border-gray-200 hover:border-blue-200 transform hover:-translate-y-1 cursor-pointer"
+                      className="group bg-white rounded-xl p-4 hover:bg-gray-50 transition-all duration-300 hover:shadow-xl border border-gray-200 hover:border-blue-200 transform hover:-translate-y-1 cursor-pointer flex flex-col min-h-[320px]"
                     >
-                      <div className="aspect-square bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg flex items-center justify-center mb-3 group-hover:scale-105 transition-transform duration-300">
+                      <div className="relative w-full aspect-square bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg flex items-center justify-center mb-3 overflow-hidden group-hover:scale-105 transition-transform duration-300">
                         {product?.image ? (
                           <img
                             src={product.image}
                             alt={product.name}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover rounded-lg"
                           />
                         ) : (
                           <div className="text-4xl font-bold text-blue-600">
@@ -370,29 +373,30 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                         )}
                       </div>
 
-                      <div className="space-y-2">
-                        <h3 className="font-semibold text-gray-900 text-sm line-clamp-2">
+                      <div className="flex flex-col flex-1 space-y-2">
+                        <h3 className="font-semibold text-gray-900 text-sm line-clamp-2 min-h-[2.5rem]">
                           {product.name}
                         </h3>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-gray-500 truncate">
                           {product.category}
                         </p>
-                        <div className="flex items-center justify-between">
-                          <span className="text-lg font-bold text-blue-600">
-                            {product.price} MMK
+                        <div className="flex items-center justify-between flex-wrap gap-2 mt-auto">
+                          <span className="text-lg font-bold text-blue-600 whitespace-nowrap">
+                            {formatNumber(product.price)} MMK
                           </span>
-                          {cartQuantity > 0 && (
-                            <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-medium animate-pulse">
+                          {/* {cartQuantity > 0 && (
+                            <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-medium animate-pulse whitespace-nowrap">
                               {cartQuantity} in cart
                             </span>
-                          )}
+                          )} */}
                         </div>
                         <button
                           onClick={() => onAddToCart(product)}
-                          className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-2.5 rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2 active:scale-95 hover:shadow-lg transform hover:-translate-y-0.5"
+                          className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-2.5 rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2 active:scale-95 hover:shadow-lg transform hover:-translate-y-0.5 mt-2"
                         >
                           <Plus size={16} />
-                          Add to Cart
+                          <span className="hidden sm:inline">Add to Cart</span>
+                          <span className="sm:hidden">Add</span>
                         </button>
                       </div>
                     </div>
@@ -409,14 +413,14 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                   return (
                     <div
                       key={product.id}
-                      className="group flex items-center gap-4 p-4 bg-white rounded-xl hover:bg-gray-50 transition-all duration-300 hover:shadow-lg border border-gray-200 hover:border-blue-200 transform hover:-translate-y-0.5"
+                      className="group flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 p-4 bg-white rounded-xl hover:bg-gray-50 transition-all duration-300 hover:shadow-lg border border-gray-200 hover:border-blue-200 transform hover:-translate-y-0.5"
                     >
-                      <div className="w-16 h-16 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                      <div className="w-20 h-20 sm:w-16 sm:h-16 flex-shrink-0 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg flex items-center justify-center overflow-hidden group-hover:scale-105 transition-transform duration-300">
                         {product.image ? (
                           <img
                             src={product.image}
                             alt={product.name}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover rounded-lg"
                           />
                         ) : (
                           <div className="text-2xl font-bold text-blue-600">
@@ -425,31 +429,34 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                         )}
                       </div>
 
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-gray-900 truncate">
                           {product.name}
                         </h3>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-gray-500 truncate">
                           {product.category}
                         </p>
                         {/* <p className="text-xs text-gray-400">Barcode: {product?.barcode}</p> */}
                       </div>
 
-                      <div className="text-right flex flex-col items-end">
-                        <div className="text-xl font-bold text-blue-600 mb-1">
-                          {product.price.toFixed(2)} MMK
-                        </div>
-                        {cartQuantity > 0 && (
-                          <div className="text-xs text-green-600 font-medium mb-2 animate-pulse">
-                            {cartQuantity} in cart
+                      <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-start w-full sm:w-auto gap-3 sm:gap-1">
+                        <div className="flex flex-col items-start sm:items-end">
+                          <div className="text-lg sm:text-xl font-bold text-blue-600 whitespace-nowrap">
+                            {product.price.toFixed(0)} MMK
                           </div>
-                        )}
+                          {cartQuantity > 0 && (
+                            <div className="text-xs text-green-600 font-medium mt-1 animate-pulse whitespace-nowrap">
+                              {cartQuantity} in cart
+                            </div>
+                          )}
+                        </div>
                         <button
                           onClick={() => onAddToCart(product)}
-                          className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-4 py-2.5 rounded-lg font-medium transition-all duration-300 flex items-center gap-2 active:scale-95 hover:shadow-lg transform hover:-translate-y-0.5 max-w-fit"
+                          className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-4 py-2.5 rounded-lg font-medium transition-all duration-300 flex items-center gap-2 active:scale-95 hover:shadow-lg transform hover:-translate-y-0.5 whitespace-nowrap"
                         >
                           <Plus size={16} />
-                          Add
+                          <span className="hidden sm:inline">Add</span>
+                          <span className="sm:hidden">Add to Cart</span>
                         </button>
                       </div>
                     </div>

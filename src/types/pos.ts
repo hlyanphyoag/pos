@@ -1,4 +1,4 @@
-import { UserRole } from "./auth";
+  import { UserRole } from "./auth";
 
 export interface ScannedProduct {
   id: string;
@@ -44,7 +44,16 @@ export interface CustomerDisplay {
   currentItem?: ScannedProduct;
 }
 
-export type Category = "OTHER" | "FOOD" | "DRINK" | "HOUSEHOLD" | "STATIONARY" | 'PERSONAL' | 'ELECTRONICS' | 'CLOTHING';
+export type InventoryCategory = "OTHER" | "FOOD" | "DRINK" | "HOUSEHOLD" | "STATIONARY" | 'PERSONAL' | 'ELECTRONICS' | 'CLOTHING';
+
+export type SaleCategory = "TODAY" | "YESTERDAY" | "LAST WEEK" | "LAST MONTH" | "LAST YEAR";
+
+export type TransactionCategory = "KPay" | "WavePay" 
+
+export type TransactionType = "Transfer" | "Received";
+
+export type FilterTypes = "Date" | "Week" | "Month"
+
 
 export interface Product{
   id: string;
@@ -53,6 +62,7 @@ export interface Product{
   description: string;
   image: string;
   price: number;
+  import_price: number;
   stock: number;
   category: Category;
   createdAt: Date;
@@ -65,6 +75,7 @@ export interface ProductPayload {
   description: string;
   image: string;
   price: number;
+  import_price: number;
   stock: number;
   category: Category;
 }
@@ -77,6 +88,14 @@ export interface ProductApiResponse {
   elements : number;
   nextPage : number | null;
   results : Product[];
+}
+
+export interface ProductLowStock {
+  id: string;
+  name: string;
+  stock: number;
+  price: number;
+  updatedAt: Date
 }
 
 
@@ -115,13 +134,30 @@ export interface GetSaleApiResponse{
     }
   }
 
+  // "page": 1,
+  //   "size": 5,
+  //   "totalPages": 1,
+  //   "totalElements": 2,
+  //   "total": 8,
+  //   "elements": 2,
+  //   "nextPage": null,
+  //   "totalSales": 2,
+  //   "totalTransactions": 2,
+  //   "totalRevenue": 4.98,
+  //   "totalProfit": 0,
+
 export interface SaleApiResponse {
   page: number;
   size: number;
+  totalPages: number;
   totalElements : number;
   total: number;
   elements : number;
   nextPage : number | null;
+  totalSales : number;
+  totalTransactions : number;
+  totalRevenue : number;
+  totalProfit : number;
   results : GetSaleApiResponse[]
 }
 

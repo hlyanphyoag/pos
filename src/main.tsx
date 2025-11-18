@@ -7,6 +7,7 @@ import { ThemeProvider } from './components/ThemeProvider';
 import { routeTree } from './routeTree.gen';
 import { queryClient } from './lib/queryClient';
 import './index.css';
+import { Toaster } from './components/ui/sonner';
 
 // Create a new router instance
 const router = createRouter({ routeTree });
@@ -15,6 +16,7 @@ createRoot(document.getElementById('root')!).render(
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <AuthProvider>
+          <Toaster />
           <RouterProvider router={router} />
         </AuthProvider>
       </ThemeProvider>

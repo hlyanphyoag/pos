@@ -1,133 +1,43 @@
-import React, { useState } from "react";
-import {
-  Download,
-  TrendingUp,
-  DollarSign,
-  ShoppingCart,
-  ChevronDown,
-  ArrowUp,
-  ArrowDown,
-  FileSpreadsheet,
-} from "lucide-react";
+import { Download, ChevronDown, ArrowRightCircle, FileX2Icon } from "lucide-react";
 import { SalesData } from "../../types/admin";
-import { useSaleQuery } from "../../services/saleServices/sale.query";
 import { format } from "date-fns";
 import Pagination from "../Pagination";
 import TableSkeleton from "../TableSkeleton";
-import { useDashboardStatisticsQuery } from "../../services/DashboardService/dashboard.query";
-import { useExcelExport } from "../../hooks/exportToExcel";
+import { StatCard } from "../StatCard";
+import { CustomDropDown } from "../CustomDropDown";
+import { SaleDetailsModal } from "./SaleDetailsModal";
+import useSales from "@/hooks/useSales";
+import { Calendar28 } from "../ui/DatePicker";
+import { formatNumber } from "@/utils/formatNumberHelper";
 
 interface SalesProps {
   salesData: SalesData[];
 }
 
 export const Sales: React.FC<SalesProps> = () => {
-  const [openSaleItems, setOpenSaleItems] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5);
-  const [isExporting, setIsExporting] = useState(false);
-
-  // Custom hook for Excel export
-  const { exportSalesToExcel, exportSalesSummaryToExcel } = useExcelExport();
-
   const {
-    data: saleData,
+    saleData,
     isPending,
-  } = useSaleQuery(currentPage, itemsPerPage, "createdAt");
-
-  const { data: dashboardStats } = useDashboardStatisticsQuery();
-
-  const totalPages = Math.ceil(saleData?.totalElements! / itemsPerPage);
-
-  console.log("SaleData:", saleData);
-
-  const handleToggle = (id: string) => {
-    saleData?.results?.forEach((sale) => {
-      if (sale.id === id) {
-        setOpenSaleItems(sale.id);
-      } else if (id === openSaleItems) {
-        setOpenSaleItems(null);
-      }
-    });
-  };
-
-  // Handle Excel export
-  const handleExport = async () => {
-    if (!saleData?.results || saleData.results.length === 0) {
-      alert('No sales data available to export');
-      return;
-    }
-
-    setIsExporting(true);
-    
-    try {
-      // Export detailed sales data
-      exportSalesSummaryToExcel(
-        saleData.results,
-        dashboardStats,
-        'sales-report'
-      );
-      
-      // Show success message
-      alert('Sales data exported successfully!');
-    } catch (error) {
-      console.error('Export failed:', error);
-      alert('Failed to export data. Please try again.');
-    } finally {
-      setIsExporting(false);
-    }
-  };
-
-  // Handle simple export (current page only)
-  const handleQuickExport = async () => {
-    if (!saleData?.results || saleData.results.length === 0) {
-      alert('No sales data available to export');
-      return;
-    }
-
-    setIsExporting(true);
-    
-   setTimeout(() => {
-    try {
-      exportSalesToExcel(saleData.results, 'sales-current-page');
-    } catch (error) {
-      console.error('Export failed:', error);
-      alert('Failed to export data. Please try again.');
-    }finally{
-        setIsExporting(false);
-    }
-   }, 1000)
-  };
-
-  const statCards = [
-    {
-      title: "Today's Revenue",
-      value: `${dashboardStats?.todayRevenue} MMK`,
-      icon: DollarSign,
-      change: "+12.5%",
-      positive: true,
-      color: "bg-green-500",
-    },
-    {
-      title: "Transactions",
-      value: dashboardStats?.totalTransactions,
-      icon: ShoppingCart,
-      change: "+8.2%",
-      positive: true,
-      color: "bg-blue-500",
-    },
-    {
-      title: "Avg Order Value",
-      value: `${dashboardStats?.avgOrderValue} MMK`,
-      icon: TrendingUp,
-      change: "+3.4%",
-      positive: true,
-      color: "bg-emerald-500",
-    },
-  ];
+    totalPages,
+    statCards,
+    setCurrentPage,
+    currentPage,
+    handleToggle,
+    handleQuickExport,
+    isExporting,
+    isModalOpen,
+    selectedSale,
+    handleCloseModal,
+    handleViewDetails,
+    openSaleItems,
+    filterTypes,
+    selectedFilterType,
+    setSelectedFilterType,
+    serviceType
+  } = useSales()
 
   return (
-    <div className="space-y-6 dark:text-white">
+    <div className=" dark:text-white">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
@@ -139,62 +49,44 @@ export const Sales: React.FC<SalesProps> = () => {
         </div>
         <div className="flex items-center gap-3">
           {/* Quick Export Button */}
-          <button 
+          <button
             onClick={handleQuickExport}
             disabled={isExporting || isPending}
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Download size={18} />
-            {isExporting ? 'Exporting...' : 'Export'}
+            {isExporting ? "Exporting..." : "Export"}
           </button>
         </div>
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {statCards.map((stat, index) => (
-          <div
-            key={index}
-            className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 hover:shadow-md transition-shadow"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <div
-                className={`w-12 h-12 ${stat.color} rounded-lg flex items-center justify-center`}
-              >
-                <stat.icon className="text-white" size={24} />
-              </div>
-              <div
-                className={`flex items-center gap-1 text-sm font-medium ${
-                  stat.positive ? "text-green-600" : "text-red-600"
-                }`}
-              >
-                {stat.positive ? (
-                  <ArrowUp size={16} />
-                ) : (
-                  <ArrowDown size={16} />
-                )}
-                {stat.change}
-              </div>
-            </div>
-            <div>
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
-                {stat.value}
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">
-                {stat.title}
-              </p>
-            </div>
+      <div className="flex gap-4 mt-6">
+            <CustomDropDown
+              categories={filterTypes}
+              paramName="filterBy"
+              selectedCategory={selectedFilterType}
+              setSelectedCategory={setSelectedFilterType}
+              origin="sales"
+            />
+            <Calendar28 filterBy={serviceType.filterBy}/>
           </div>
+
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+        {statCards.map((stat, index) => (
+          <StatCard key={index} {...stat} />
         ))}
       </div>
 
       {/* Detailed Sales Table */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+      <div className="bg-white mb-4 dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden mt-6">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
             Sales History
           </h3>
         </div>
+
+        {/* Table  */}
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 dark:bg-gray-700">
@@ -224,6 +116,15 @@ export const Sales: React.FC<SalesProps> = () => {
             </thead>
             {isPending ? (
               <TableSkeleton />
+            ) : !saleData?.results?.length ? (
+              <tbody>
+                <tr>
+                  <td colSpan={7} className="py-4 px-6 text-center">
+                    <FileX2Icon className="mx-auto text-gray-400 dark:text-gray-500 mb-4" size={48} />
+                    <p className="text-gray-500 dark:text-gray-400 text-lg">No Sales found.</p>
+                  </td>
+                </tr>
+              </tbody>
             ) : (
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {saleData?.results?.map((data) => {
@@ -289,7 +190,9 @@ export const Sales: React.FC<SalesProps> = () => {
                                   {item?.product?.name}
                                 </span>
                                 <span className="text-sm text-gray-500 dark:text-gray-400">
-                                  {!item?.product?.name ? "" : `x${item?.quantity}` }
+                                  {!item?.product?.name
+                                    ? ""
+                                    : `x${item?.quantity}`}
                                 </span>
                               </div>
                             </div>
@@ -297,7 +200,7 @@ export const Sales: React.FC<SalesProps> = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-semibold text-gray-900 dark:text-white">
-                          {data.total} MMK
+                          {formatNumber(data.total)} <span className="text-gray-500 text-xs">MMK</span>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -309,9 +212,12 @@ export const Sales: React.FC<SalesProps> = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400">
-                          {data.paid ? "Paid" : "Unpaid"}
-                        </span>
+                        <button
+                          onClick={() => handleViewDetails(data)}
+                          className="hover:scale-110 transition-transform"
+                        >
+                          <ArrowRightCircle size={25} className="text-blue-500 hover:text-blue-600" />
+                        </button>
                       </td>
                     </tr>
                   );
@@ -320,11 +226,19 @@ export const Sales: React.FC<SalesProps> = () => {
             )}
           </table>
         </div>
+
       </div>
       <Pagination
         totalPages={totalPages}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
+      />
+
+      {/* Sale Details Modal */}
+      <SaleDetailsModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        sale={selectedSale}
       />
     </div>
   );

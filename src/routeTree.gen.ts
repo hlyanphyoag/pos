@@ -15,6 +15,12 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as CustomerRouteImport } from './routes/customer'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PosIndexRouteImport } from './routes/pos.index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as PosTransctionsRouteImport } from './routes/pos.transctions'
+import { Route as AdminTransactionRouteImport } from './routes/admin.transaction'
+import { Route as AdminSalesRouteImport } from './routes/admin.sales'
+import { Route as AdminInventoryRouteImport } from './routes/admin.inventory'
 
 const PosRoute = PosRouteImport.update({
   id: '/pos',
@@ -46,47 +52,128 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PosIndexRoute = PosIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PosRoute,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const PosTransctionsRoute = PosTransctionsRouteImport.update({
+  id: '/transctions',
+  path: '/transctions',
+  getParentRoute: () => PosRoute,
+} as any)
+const AdminTransactionRoute = AdminTransactionRouteImport.update({
+  id: '/transaction',
+  path: '/transaction',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSalesRoute = AdminSalesRouteImport.update({
+  id: '/sales',
+  path: '/sales',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminInventoryRoute = AdminInventoryRouteImport.update({
+  id: '/inventory',
+  path: '/inventory',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/customer': typeof CustomerRoute
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
-  '/pos': typeof PosRoute
+  '/pos': typeof PosRouteWithChildren
+  '/admin/inventory': typeof AdminInventoryRoute
+  '/admin/sales': typeof AdminSalesRoute
+  '/admin/transaction': typeof AdminTransactionRoute
+  '/pos/transctions': typeof PosTransctionsRoute
+  '/admin/': typeof AdminIndexRoute
+  '/pos/': typeof PosIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
   '/customer': typeof CustomerRoute
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
-  '/pos': typeof PosRoute
+  '/admin/inventory': typeof AdminInventoryRoute
+  '/admin/sales': typeof AdminSalesRoute
+  '/admin/transaction': typeof AdminTransactionRoute
+  '/pos/transctions': typeof PosTransctionsRoute
+  '/admin': typeof AdminIndexRoute
+  '/pos': typeof PosIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/customer': typeof CustomerRoute
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
-  '/pos': typeof PosRoute
+  '/pos': typeof PosRouteWithChildren
+  '/admin/inventory': typeof AdminInventoryRoute
+  '/admin/sales': typeof AdminSalesRoute
+  '/admin/transaction': typeof AdminTransactionRoute
+  '/pos/transctions': typeof PosTransctionsRoute
+  '/admin/': typeof AdminIndexRoute
+  '/pos/': typeof PosIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/customer' | '/login' | '/logout' | '/pos'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/customer'
+    | '/login'
+    | '/logout'
+    | '/pos'
+    | '/admin/inventory'
+    | '/admin/sales'
+    | '/admin/transaction'
+    | '/pos/transctions'
+    | '/admin/'
+    | '/pos/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/customer' | '/login' | '/logout' | '/pos'
-  id: '__root__' | '/' | '/admin' | '/customer' | '/login' | '/logout' | '/pos'
+  to:
+    | '/'
+    | '/customer'
+    | '/login'
+    | '/logout'
+    | '/admin/inventory'
+    | '/admin/sales'
+    | '/admin/transaction'
+    | '/pos/transctions'
+    | '/admin'
+    | '/pos'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/customer'
+    | '/login'
+    | '/logout'
+    | '/pos'
+    | '/admin/inventory'
+    | '/admin/sales'
+    | '/admin/transaction'
+    | '/pos/transctions'
+    | '/admin/'
+    | '/pos/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AdminRoute: typeof AdminRoute
+  AdminRoute: typeof AdminRouteWithChildren
   CustomerRoute: typeof CustomerRoute
   LoginRoute: typeof LoginRoute
   LogoutRoute: typeof LogoutRoute
-  PosRoute: typeof PosRoute
+  PosRoute: typeof PosRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -133,16 +220,86 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pos/': {
+      id: '/pos/'
+      path: '/'
+      fullPath: '/pos/'
+      preLoaderRoute: typeof PosIndexRouteImport
+      parentRoute: typeof PosRoute
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/pos/transctions': {
+      id: '/pos/transctions'
+      path: '/transctions'
+      fullPath: '/pos/transctions'
+      preLoaderRoute: typeof PosTransctionsRouteImport
+      parentRoute: typeof PosRoute
+    }
+    '/admin/transaction': {
+      id: '/admin/transaction'
+      path: '/transaction'
+      fullPath: '/admin/transaction'
+      preLoaderRoute: typeof AdminTransactionRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/sales': {
+      id: '/admin/sales'
+      path: '/sales'
+      fullPath: '/admin/sales'
+      preLoaderRoute: typeof AdminSalesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/inventory': {
+      id: '/admin/inventory'
+      path: '/inventory'
+      fullPath: '/admin/inventory'
+      preLoaderRoute: typeof AdminInventoryRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
+interface AdminRouteChildren {
+  AdminInventoryRoute: typeof AdminInventoryRoute
+  AdminSalesRoute: typeof AdminSalesRoute
+  AdminTransactionRoute: typeof AdminTransactionRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminInventoryRoute: AdminInventoryRoute,
+  AdminSalesRoute: AdminSalesRoute,
+  AdminTransactionRoute: AdminTransactionRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
+interface PosRouteChildren {
+  PosTransctionsRoute: typeof PosTransctionsRoute
+  PosIndexRoute: typeof PosIndexRoute
+}
+
+const PosRouteChildren: PosRouteChildren = {
+  PosTransctionsRoute: PosTransctionsRoute,
+  PosIndexRoute: PosIndexRoute,
+}
+
+const PosRouteWithChildren = PosRoute._addFileChildren(PosRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AdminRoute: AdminRoute,
+  AdminRoute: AdminRouteWithChildren,
   CustomerRoute: CustomerRoute,
   LoginRoute: LoginRoute,
   LogoutRoute: LogoutRoute,
-  PosRoute: PosRoute,
+  PosRoute: PosRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

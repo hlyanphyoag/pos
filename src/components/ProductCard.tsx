@@ -1,6 +1,7 @@
 import React from "react";
 import { Product } from "../types";
 import { Plus } from "lucide-react";
+import { formatNumber } from "@/utils/formatNumberHelper";
 
 interface ProductCardProps {
   product: Product;
@@ -28,7 +29,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         <p className="text-sm text-gray-500 mb-3">{product.category}</p>
         <div className="flex items-center justify-between">
           <span className="text-xl font-bold text-blue-600">
-            {product.price} MMK
+            HEllo
+            {formatNumber(product.price)} MMK
           </span>
           <div className="bottom-0">
             <button

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { PaymentDetails, DigitalPaymentMethod } from "../../types/pos";
 import {
   X,
@@ -20,6 +20,7 @@ import { useSaleMutationQuery } from "../../services/saleServices/sale.mutation"
 import { useCartSocket } from "../../services/socketService";
 import KPay from "../../../public/KPay.jpg";
 import WavePay from "../../../public/WavePay.jpg";
+import { formatNumber } from "@/utils/formatNumberHelper";
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -58,7 +59,20 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
   const { mutate: saleMutation, isPending } = useSaleMutationQuery();
 
+  useEffect(() => {
+    if(isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+    }
+  }, [isOpen])
+
   if (!isOpen) return null;
+
 
   const handlePaymentMutaitonFn = () => {
     const payloadItem = items.map((item) => ({
@@ -130,7 +144,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       total,
       paymentDetails: completedPaymentDetails,
       timestamp: new Date(),
-      storeName: "A&E Mart",
+      storeName: "QuickPOS",
       storeAddress: "No.112, Main Street, Dawei, Tanintharyi",
       cashierName: authState.user?.name || "Cashier",
     };
@@ -150,7 +164,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       total,
       paymentDetails: completedPaymentDetails,
       timestamp: new Date(),
-      storeName: "A&E Mart",
+      storeName: "QuickPOS",
       storeAddress: "No.112, Main Street, Dawei, Tanintharyi",
       cashierName: authState.user?.name || "Cashier",
     };
@@ -201,8 +215,8 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   );
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-auto ">
-      <div className="bg-white rounded-3xl p-8 max-w-lg w-full mx-4 relative">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-3xl p-8 max-w-lg w-full mx-4 relative max-h-[90vh] overflow-auto   [&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-track]:my-4 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:dark:bg-gray-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb:hover]:bg-gray-400 [&::-webkit-scrollbar-thumb:hover]:dark:bg-gray-500">
         <button
           onClick={() => {
             handleCompleteTransaction();
@@ -338,7 +352,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   Total Amount:
                 </span>
                 <span className="text-3xl font-bold text-blue-600">
-                  {total} MMK
+                  {formatNumber(total)} MMK
                 </span>
               </div>
             </div>

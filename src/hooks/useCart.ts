@@ -41,7 +41,7 @@ export const useCart = () => {
     0
   );
   const tax = subtotal * 0.05; // 5% tax
-  const total = subtotal + tax;
+  const total = subtotal;
 
   return {
     items,

@@ -30,10 +30,12 @@ export const QRCodeModal: React.FC<QRCodeModalProps> = ({
     }
   }, [isOpen]);
 
+  console.log("QrCode:", qrCodeRef.current)
+
   const downloadQRCode = async () => {
     setIsDownloading(true);
     setIsSuccess(false);
-    
+
     if (qrCodeRef.current) {
       try {
         const canvas = await html2canvas(qrCodeRef.current, {
@@ -47,14 +49,14 @@ export const QRCodeModal: React.FC<QRCodeModalProps> = ({
         const link = document.createElement('a');
         link.download = `QR_${productName.replace(/\s+/g, '_')}.png`;
         link.href = canvas.toDataURL('image/png');
-        
+
         // Trigger download
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
         setTimeout(() => {
-            setIsDownloading(false);
-            setIsSuccess(true);
+          setIsDownloading(false);
+          setIsSuccess(true);
         }, 1500)
 
         setTimeout(() => {
@@ -91,24 +93,25 @@ export const QRCodeModal: React.FC<QRCodeModalProps> = ({
 
         {/* QR Code Display */}
         <div className="text-center mb-6">
-          <div 
+          <div
             ref={qrCodeRef}
             className="inline-block p-6 bg-white rounded-lg shadow-inner"
             style={{ backgroundColor: '#ffffff' }}
           >
-            <QRCode 
-              value={productSku} 
+            <QRCode
+              value={productSku}
               size={200}
               style={{ height: "auto", maxWidth: "100%", width: "100%" }}
             />
+            <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
+              <p><span className="font-medium">Product:</span> {productName}</p>
+            </div>
           </div>
-          
-          {/* Product Info */}
-          <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
-            <p><span className="font-medium">Product:</span> {productName}</p>
-            <p><span className="font-medium">SKU:</span> {productSku}</p>
-            <p><span className="font-medium">ID:</span> {productId}</p>
-          </div>
+
+           <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
+              <p><span className="font-medium">SKU:</span> {productSku}</p>
+              <p><span className="font-medium">ID:</span> {productId}</p>
+            </div>
         </div>
 
         {/* Actions */}
@@ -119,23 +122,22 @@ export const QRCodeModal: React.FC<QRCodeModalProps> = ({
           >
             Close
           </button>
-                     <button
-             disabled={isDownloading || isSuccess}
-             onClick={downloadQRCode}
-             className={`flex-1 px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 ${
-               isSuccess || isDownloading
-                 ? 'bg-blue-600 opacity-75 cursor-not-allowed text-white'
-                 : 'bg-blue-600 hover:bg-blue-700 text-white'
-             }`}
-           >
-             {isDownloading && <Loader2 size={20} className="animate-spin" />}
-             {isSuccess && <CheckCircle size={20}/>}
-             {!isDownloading && !isSuccess && <Download size={16} />}
-             
-             {isDownloading && 'Generating...'}
-             {isSuccess && 'Downloaded!'}
-             {!isDownloading && !isSuccess && 'Download PNG'}
-           </button>
+          <button
+            disabled={isDownloading || isSuccess}
+            onClick={downloadQRCode}
+            className={`flex-1 px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 ${isSuccess || isDownloading
+                ? 'bg-blue-600 opacity-75 cursor-not-allowed text-white'
+                : 'bg-blue-600 hover:bg-blue-700 text-white'
+              }`}
+          >
+            {isDownloading && <Loader2 size={20} className="animate-spin" />}
+            {isSuccess && <CheckCircle size={20} />}
+            {!isDownloading && !isSuccess && <Download size={16} />}
+
+            {isDownloading && 'Generating...'}
+            {isSuccess && 'Downloaded!'}
+            {!isDownloading && !isSuccess && 'Download PNG'}
+          </button>
         </div>
       </div>
     </div>

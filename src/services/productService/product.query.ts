@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { productQueryKey } from "./product.queryKey"
-import { productQueryFn, productQueryFnBySku, productQueryFnCategories } from "./product.queryFn"
-import { ProductApiResponse } from "../../types/pos"
+import { lowStockProductQuery, productQueryFn, productQueryFnBySku, productQueryFnCategories } from "./product.queryFn"
+import { ProductApiResponse, ProductLowStock } from "../../types/pos"
 
 
 export const useProductCategoriesQuery = () => {
@@ -16,6 +16,14 @@ export const useProductQuery = (page: number | null, size: number | null, search
         queryKey: productQueryKey.getAllProducts(page, size, searchByKeyword, searchByCategory, sortBy),
         queryFn:() =>  productQueryFn(page, size, searchByKeyword, searchByCategory, sortBy)
     })
+}
+
+export const useLowStockQuery = () => {
+    return useQuery<ProductLowStock>({
+        queryKey: ['low-stock'],
+        queryFn: lowStockProductQuery
+        }
+    )
 }
 
 export const useProductQueryBySku = (sku: string) => {
